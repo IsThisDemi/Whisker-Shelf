@@ -34,9 +34,9 @@ namespace View
         idLayout->addWidget(idLabel);
         idLayout->addWidget(idLineEdit);
 
-        // Create name layout
+        // Create title layout
         nameLayout = new QHBoxLayout;
-        nameLabel = new QLabel("Name:", this);
+        nameLabel = new QLabel("Title:", this);
         nameLineEdit = new QLineEdit(this);
         nameLineEdit->setFixedSize(193, 26);
         nameLayout->addWidget(nameLabel);
@@ -50,15 +50,17 @@ namespace View
         descriptionLayout->addWidget(descriptionLabel);
         descriptionLayout->addWidget(descriptionLineEdit);
 
-        // Create brand layout
+        // Create author layout
         brandLayout = new QHBoxLayout;
-        brandLabel = new QLabel("Brand:", this);
+        brandLabel = new QLabel("Author:", this);
         brandLineEdit = new QLineEdit(this);
         brandLineEdit->setFixedSize(193, 26);
         brandLayout->addWidget(brandLabel);
         brandLayout->addWidget(brandLineEdit);
 
-        // Create journal layout
+        // Initialize all specific media type fields
+        
+        // Article fields
         journalLayout = new QHBoxLayout;
         journalLabel = new QLabel("Journal:", this);
         journalLineEdit = new QLineEdit(this);
@@ -66,7 +68,6 @@ namespace View
         journalLayout->addWidget(journalLabel);
         journalLayout->addWidget(journalLineEdit);
 
-        // Create volume layout
         volumeLayout = new QHBoxLayout;
         volumeLabel = new QLabel("Volume:", this);
         volumeLineEdit = new QLineEdit(this);
@@ -74,7 +75,6 @@ namespace View
         volumeLayout->addWidget(volumeLabel);
         volumeLayout->addWidget(volumeLineEdit);
 
-        // Create DOI layout
         doiLayout = new QHBoxLayout;
         doiLabel = new QLabel("DOI:", this);
         doiLineEdit = new QLineEdit(this);
@@ -82,7 +82,28 @@ namespace View
         doiLayout->addWidget(doiLabel);
         doiLayout->addWidget(doiLineEdit);
 
-        // Create artist layout
+        pagesLayout = new QHBoxLayout;
+        pagesLabel = new QLabel("Pages:", this);
+        pagesLineEdit = new QLineEdit(this);
+        pagesLineEdit->setFixedSize(193, 26);
+        pagesLayout->addWidget(pagesLabel);
+        pagesLayout->addWidget(pagesLineEdit);
+
+        // Audio fields
+        durationLayout = new QHBoxLayout;
+        durationLabel = new QLabel("Duration:", this);
+        durationLineEdit = new QLineEdit(this);
+        durationLineEdit->setFixedSize(193, 26);
+        durationLayout->addWidget(durationLabel);
+        durationLayout->addWidget(durationLineEdit);
+
+        formatLayout = new QHBoxLayout;
+        formatLabel = new QLabel("Format:", this);
+        formatLineEdit = new QLineEdit(this);
+        formatLineEdit->setFixedSize(193, 26);
+        formatLayout->addWidget(formatLabel);
+        formatLayout->addWidget(formatLineEdit);
+
         artistLayout = new QHBoxLayout;
         artistLabel = new QLabel("Artist:", this);
         artistLineEdit = new QLineEdit(this);
@@ -90,7 +111,6 @@ namespace View
         artistLayout->addWidget(artistLabel);
         artistLayout->addWidget(artistLineEdit);
 
-        // Create album layout
         albumLayout = new QHBoxLayout;
         albumLabel = new QLabel("Album:", this);
         albumLineEdit = new QLineEdit(this);
@@ -98,7 +118,7 @@ namespace View
         albumLayout->addWidget(albumLabel);
         albumLayout->addWidget(albumLineEdit);
 
-        // Create ISBN layout
+        // Book fields
         isbnLayout = new QHBoxLayout;
         isbnLabel = new QLabel("ISBN:", this);
         isbnLineEdit = new QLineEdit(this);
@@ -106,7 +126,6 @@ namespace View
         isbnLayout->addWidget(isbnLabel);
         isbnLayout->addWidget(isbnLineEdit);
 
-        // Create publisher layout
         publisherLayout = new QHBoxLayout;
         publisherLabel = new QLabel("Publisher:", this);
         publisherLineEdit = new QLineEdit(this);
@@ -114,7 +133,14 @@ namespace View
         publisherLayout->addWidget(publisherLabel);
         publisherLayout->addWidget(publisherLineEdit);
 
-        // Create budget layout
+        genreLayout = new QHBoxLayout;
+        genreLabel = new QLabel("Genre:", this);
+        genreLineEdit = new QLineEdit(this);
+        genreLineEdit->setFixedSize(193, 26);
+        genreLayout->addWidget(genreLabel);
+        genreLayout->addWidget(genreLineEdit);
+
+        // Film fields
         budgetLayout = new QHBoxLayout;
         budgetLabel = new QLabel("Budget ($):", this);
         budgetLineEdit = new QLineEdit(this);
@@ -125,12 +151,11 @@ namespace View
         // Create buttons layout
         buttonsLayout = new QHBoxLayout;
 
-        // Create create button
+        // Create buttons
         createButton = new QPushButton("Add", this);
         createButton->setShortcut(Qt::Key_Enter);
         connect(createButton, &QPushButton::clicked, this, &AddMediaDialogueWindow::createAndAddSlot);
 
-        // Create discard button
         discardButton = new QPushButton("Cancel", this);
         discardButton->setShortcut(Qt::Key_Escape);
         connect(discardButton, &QPushButton::clicked, this, &AddMediaDialogueWindow::discardChanges);
@@ -139,7 +164,7 @@ namespace View
         buttonsLayout->addWidget(discardButton);
         buttonsLayout->addWidget(createButton);
 
-        // Add layouts to main layout
+        // Add all layouts to main layout
         mainLayout->addLayout(typeLayout);
         mainLayout->addLayout(idLayout);
         mainLayout->addLayout(nameLayout);
@@ -148,15 +173,22 @@ namespace View
         mainLayout->addLayout(journalLayout);
         mainLayout->addLayout(volumeLayout);
         mainLayout->addLayout(doiLayout);
+        mainLayout->addLayout(pagesLayout);
+        mainLayout->addLayout(durationLayout);
+        mainLayout->addLayout(formatLayout);
         mainLayout->addLayout(artistLayout);
         mainLayout->addLayout(albumLayout);
         mainLayout->addLayout(isbnLayout);
         mainLayout->addLayout(publisherLayout);
+        mainLayout->addLayout(genreLayout);
         mainLayout->addLayout(budgetLayout);
         mainLayout->addLayout(buttonsLayout);
 
         // Set main layout as window layout
         setLayout(mainLayout);
+
+        // Initially hide all specific fields
+        onTypeChanged(0);
 
         // Connect typeComboBox signal to onTypeChanged slot
         connect(typeComboBox, &QComboBox::currentIndexChanged, this, &AddMediaDialogueWindow::onTypeChanged);
@@ -191,12 +223,12 @@ namespace View
             QMessageBox::critical(this, "Error", "The ID must consist of exactly 6 digits!");
             return;
         }
-        std::string name = nameLineEdit->text().toStdString();
+        std::string title = nameLineEdit->text().toStdString();
         std::string description = descriptionLineEdit->text().toStdString();
-        std::string brand = brandLineEdit->text().toStdString();
+        std::string author = brandLineEdit->text().toStdString();
 
-        if (name.empty() || description.empty() || brand.empty()) {
-            QMessageBox::critical(this, "Error", "Id, name, description and brand values cannot be empty!");
+        if (title.empty() || description.empty() || author.empty()) {
+            QMessageBox::critical(this, "Error", "Id, title, description and author values cannot be empty!");
             return;
         }
         for (Media::AbstractMedia *media : medias) {
@@ -204,14 +236,14 @@ namespace View
                 QMessageBox::critical(this, "Error", "ID already in use");
                 return;
             }
-            if (media->getTitle() == name) {
+            if (media->getTitle() == title) {
                 QMessageBox::critical(this, "Error", "Name already in use");
                 return;
             }
         }
         std::string type = typeComboBox->currentText().toStdString();
         std::string currentDate = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
-        Media::AbstractMedia *media;
+        Media::AbstractMedia *media = nullptr;
 
         if (type == "Article") {
             bool pagesOk = true;
@@ -229,7 +261,10 @@ namespace View
                 return;
             }
             
-            media = new Media::Article(id, name, currentDate, brand, description, 
+            std::string title = nameLineEdit->text().toStdString();
+            std::string author = brandLineEdit->text().toStdString();
+            
+            media = new Media::Article(id, title, currentDate, author, description, 
                                      journal, volume, pages, doi);
         } 
         else if (type == "Audio") {
@@ -249,7 +284,10 @@ namespace View
                 return;
             }
             
-            media = new Media::Audio(id, name, currentDate, brand, description,
+            std::string title = nameLineEdit->text().toStdString();
+            std::string author = brandLineEdit->text().toStdString();
+            
+            media = new Media::Audio(id, title, currentDate, author, description,
                                    duration, format, artist, album);
         } 
         else if (type == "Book") {
@@ -269,7 +307,10 @@ namespace View
                 return;
             }
             
-            media = new Media::Book(id, name, currentDate, brand, description,
+            std::string title = nameLineEdit->text().toStdString();
+            std::string author = brandLineEdit->text().toStdString();
+            
+            media = new Media::Book(id, title, currentDate, author, description,
                                   isbn, pages, publisher, genre);
         } 
         else if (type == "Film") {
@@ -280,6 +321,9 @@ namespace View
                 return;
             }
             
+            std::string title = nameLineEdit->text().toStdString();
+            std::string description = descriptionLineEdit->text().toStdString();
+            std::string director = brandLineEdit->text().toStdString();
             std::string genre = genreLineEdit->text().toStdString();
             bool budgetOk = true;
             double budget = budgetLineEdit->text().toDouble(&budgetOk);
@@ -289,14 +333,23 @@ namespace View
                 return;
             }
             
-            if (genre.empty()) {
-                QMessageBox::critical(this, "Error", "Genre cannot be empty!");
+            if (title.empty() || description.empty() || director.empty() || genre.empty()) {
+                QMessageBox::critical(this, "Error", "Title, description, director and genre cannot be empty!");
                 return;
             }
             
-            media = new Media::Film(id, name, currentDate, brand, description,
-                                  brand, duration, genre, budget);
+            media = new Media::Film(id, title, currentDate, director, description,
+                                  director, duration, genre, budget);
+        } else {
+            QMessageBox::critical(this, "Error", "Invalid media type selected!");
+            return;
         }
+        
+        if (!media) {
+            QMessageBox::critical(this, "Error", "Failed to create media!");
+            return;
+        }
+        
         emit mediaAdded(media);
     }
 
@@ -317,7 +370,7 @@ namespace View
     void AddMediaDialogueWindow::onTypeChanged(int index) {
         QString type = typeComboBox->itemText(index);
         
-        // Nascondi tutti i campi specifici
+        // Hide all specific fields first
         journalLabel->setVisible(false);
         journalLineEdit->setVisible(false);
         volumeLabel->setVisible(false);
@@ -343,7 +396,10 @@ namespace View
         budgetLabel->setVisible(false);
         budgetLineEdit->setVisible(false);
 
-        // Mostra i campi in base al tipo selezionato
+        // Update Author/Director label based on type
+        brandLabel->setText(type == "Film" ? "Director:" : "Author:");
+
+        // Show fields based on selected type
         if (type == "Article") {
             journalLabel->setVisible(true);
             journalLineEdit->setVisible(true);
