@@ -1,0 +1,18 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>Assets/appIcon.png</file>
+    <file>Assets/style.qss</file>
+    <file>Assets/Icons/save.png</file>
+    <file>Assets/Icons/save-as.png</file>
+    <file>Assets/Icons/open.png</file>
+    <file>Assets/Icons/add.png</file>
+    <file>Assets/Icons/back.png</file>
+    <file>Assets/Icons/play.png</file>
+    <file>Assets/Icons/edit.png</file>
+    <file>Assets/Icons/delete.png</file>
+    <file>Assets/Icons/Medias/audio.png</file>
+    <file>Assets/Icons/Medias/article.png</file>
+    <file>Assets/Icons/Medias/book.png</file>
+    <file>Assets/Icons/Medias/movie.png</file>
+</qresource>
+</RCC>

@@ -1,0 +1,49 @@
+#ifndef MEDIA_ARTICLE_H
+#define MEDIA_ARTICLE_H
+
+#include "AbstractMedia.h"
+
+namespace Media
+{
+    class Article : public AbstractMedia
+    {
+    private:
+        std::string journalName;  /// Nome della rivista
+        std::string volumeNumber; /// Volume/numero della rivista
+        unsigned int pageCount;   /// Numero di pagine
+        std::string doi;          /// Digital Object Identifier
+
+    public:
+        Article(
+            const unsigned int id,
+            const std::string title,
+            const std::string publishDate,
+            const std::string author,
+            const std::string description,
+            const std::string journalName,
+            const std::string volumeNumber,
+            const unsigned int pageCount,
+            const std::string doi);
+
+        // Getters
+        const std::string &getJournalName() const;
+        const std::string &getVolumeNumber() const;
+        unsigned int getPageCount() const;
+        const std::string &getDoi() const;
+
+        // Setters con method chaining
+        Article &setJournalName(const std::string journalName);
+        Article &setVolumeNumber(const std::string volumeNumber);
+        Article &setPageCount(const unsigned int pageCount);
+        Article &setDoi(const std::string doi);
+
+        // Clone method
+        Article *clone() const;
+
+        // Visitor pattern methods
+        void accept(IConstVisitor &visitor) const;
+        void accept(IVisitor &visitor);
+    };
+}
+
+#endif

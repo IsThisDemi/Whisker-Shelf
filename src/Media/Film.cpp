@@ -1,0 +1,81 @@
+#include "Film.h"
+
+namespace Media
+{
+    Film::Film(
+        const unsigned int id,
+        const std::string title,
+        const std::string publishDate,
+        const std::string author,
+        const std::string description,
+        const std::string director,
+        const unsigned int duration,
+        const std::string genre,
+        const double budget)
+        : AbstractMedia(id, title, publishDate, author, description),
+          director(director),
+          duration(duration),
+          genre(genre),
+          budget(budget)
+    {
+    }
+
+    const std::string &Film::getDirector() const
+    {
+        return director;
+    }
+
+    Film &Film::setDirector(const std::string director)
+    {
+        this->director = director;
+        return *this;
+    }
+
+    unsigned int Film::getDuration() const
+    {
+        return duration;
+    }
+
+    Film &Film::setDuration(const unsigned int duration)
+    {
+        this->duration = duration;
+        return *this;
+    }
+
+    const std::string &Film::getGenre() const
+    {
+        return genre;
+    }
+
+    Film &Film::setGenre(const std::string genre)
+    {
+        this->genre = genre;
+        return *this;
+    }
+
+    double Film::getBudget() const
+    {
+        return budget;
+    }
+
+    Film &Film::setBudget(const double budget)
+    {
+        this->budget = budget;
+        return *this;
+    }
+
+    Film *Film::clone() const
+    {
+        return new Film(*this);
+    }
+
+    void Film::accept(IConstVisitor &visitor) const
+    {
+        visitor.visit(*this);
+    }
+
+    void Film::accept(IVisitor &visitor)
+    {
+        visitor.visit(*this);
+    }
+}

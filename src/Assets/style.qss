@@ -1,0 +1,238 @@
+/* Sets the background color of the main window */
+QMainWindow {
+  background-color: #1C2433;
+}
+
+/* Sets the color of all labels */
+QLabel {
+  color: #4A90E2;
+}
+
+/* Sets the background color and border radius of the icon labels */
+QLabel#iconLabel {
+  background-color: #2C3E50;
+  border-radius: 25px;
+  padding-left: 0px;
+}
+
+/* Sets the color of the data and media name labels */
+QLabel#dataLabel,
+QLabel#mediaNameLabel {
+  color: #2C3E50;
+}
+
+/* Sets the background color and border radius of the dialog */
+QDialog {
+  background-color: #F5F7FA;
+}
+
+/* Sets the background color, border, and border radius of the combo box */
+QComboBox {
+  background-color: #4A90E2;
+  border: 1px solid #E1E8ED;
+  border-radius: 8px;
+  color: white;
+}
+
+/* Sets the background color, border, and position of the toolbar */
+QToolBar {
+  background-color: transparent;
+  border: 0px;
+}
+
+/* Sets the background color, border radius, and position of the primary toolbar */
+QToolBar::primary {
+  background-color: #F5F7FA;
+  position: absolute;
+  bottom: 0px;
+}
+
+/* Sets the width, height, border radius, background color, color, and border of the toolbar buttons */
+QToolBar QToolButton {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+  margin: 0px 30px 0px 30px;
+}
+
+/* Sets the background color of the toolbar buttons when hovered over */
+QToolBar QToolButton:hover {
+  background-color: #357ABD;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Sets the background color of the toolbar buttons when pressed */
+QToolBar QToolButton:pressed {
+  background-color: #2C5F99;
+}
+
+/* Sets the width, height, border radius, background color, color, and border of the push buttons */
+QPushButton {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: #4A90E2;
+  color: white;
+  border: none;
+}
+
+/* Sets the background color of the push buttons when hovered over */
+QPushButton:hover {
+  background-color: #357ABD;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Sets the background color of the push buttons when pressed */
+QPushButton:pressed {
+  background-color: #2C5F99;
+}
+
+/* Sets the height, border radius, background color, and color of the back button */
+QPushButton#backButton {
+  height: 43px;
+  border-radius: 8px;
+}
+
+/* Sets the background color, border, border radius, and color of the scroll area */
+QScrollArea {
+  background-color: #F5F7FA;
+  border: 1px solid #E1E8ED;
+  border-radius: 8px;
+}
+
+/* Sets the background color, border, and border radius of the empty panel frame */
+QFrame#emptyPanel {
+  background-color: #F5F7FA;
+  /* border: 1px solid #E1E8ED; */ /* Enable this line to see the border of the empty panel frame */
+  border-radius: 8px;
+}
+
+/* Sets the background color, border, border radius, and color of the initial chart widget frame */
+QFrame#initialChartWidget {
+  background-color: #F5F7FA;
+  /* border: 1px solid #E1E8ED; */ /* Enable this line to see the border of the initial chart widget */
+  border-radius: 30px;
+}
+
+/* Sets the margin, background color, border radius, and color of the chart widget frame */
+QFrame#chartWidget {
+  margin: 12px;
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sets the margin, background color, and border radius of the chart view */
+QChartView {
+  margin: 0px;
+  background-color: white;
+  border-radius: 30px;
+}
+
+/* Sets the background color, border, border radius, color, and border of the status bar */
+QStatusBar {
+  background-color: white;
+  border: 1px solid #E1E8ED;
+  color: #2C3E50;
+  border-radius: 8px;
+}
+
+/* Sets the background color, border, border radius, and color of the line edit */
+QLineEdit {
+  background-color: white;
+  border: 1px solid #E1E8ED;
+  color: #2C3E50;
+  border-radius: 8px;
+  padding-left: 10px;
+}
+
+/* Sets the background color of the line edit when disabled */
+QLineEdit#valueLineEditDisabled {
+  background-color: #F5F7FA;
+}
+
+/* Sets the background color, border radius, and color of the background widget */
+QWidget#backgroundWidget {
+  background-color: white;
+  border-radius: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sets the background color of the media widget container */
+QWidget#mediaWidgetContainer {
+  background-color: #F5F7FA;
+}
+
+/* Hides the scrollbar buttons */
+QScrollArea {
+  border: none; /* Removes the border around the QScrollArea, if desired */
+}
+
+/* Sets the width and color of the vertical scrollbar */
+QScrollBar:vertical {
+  width: 16px; /* Vertical scrollbar width */
+  background: white; /* Background color */
+  border-radius: 8px; /* Border radius */
+}
+
+/* Sets the background color, width, and border radius of the vertical scrollbar handle */
+QScrollBar::handle:vertical {
+  background: #4A90E2; /* Handle color */
+  min-height: 20px; /* Minimum height of the handle */
+  width: 6px;
+  margin: 5px;
+  border-radius: 3px; /* Handle border radius */
+}
+
+/* Removes the borders from the vertical scrollbar buttons */
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+  border: none; /* Removes borders from the buttons */
+  background: none; /* Makes the buttons transparent */
+}
+
+/* Hides the vertical scrollbar arrows */
+QScrollBar::up-arrow:vertical,
+QScrollBar::down-arrow:vertical {
+  width: 0px; /* Hides the arrows */
+  height: 0px;
+}
+
+/* Removes the background color from the vertical scrollbar tracks */
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+  background: none; /* Background color of the tracks */
+}
+
+/* Sets the height and color of the horizontal scrollbar */
+QScrollBar:horizontal {
+  height: 16px; /* Horizontal scrollbar height */
+  background: white; /* Background color */
+  border-radius: 8px; /* Border radius */
+}
+
+/* Sets the background color, width, and border radius of the horizontal scrollbar handle */
+QScrollBar::handle:horizontal {
+  background: #4A90E2; /* Handle color - matches primary color */
+  min-width: 20px; /* Minimum width of the handle */
+  height: 6px;
+  margin: 5px;
+  border-radius: 3px; /* Handle border radius */
+}
+
+/* Removes the borders from the horizontal scrollbar buttons */
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+  border: none; /* Removes borders from the buttons */
+  background: none; /* Makes the buttons transparent */
+}
+
+/* Hides the horizontal scrollbar arrows */
+QScrollBar::left-arrow:horizontal,
+QScrollBar::right-arrow:horizontal {
+  width: 0px; /* Hides the arrows */
+  height: 0px;
+}
