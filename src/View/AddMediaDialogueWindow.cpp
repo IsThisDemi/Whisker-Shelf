@@ -1,6 +1,8 @@
 #include "AddMediaDialogueWindow.h"
 #include <QDate>
 #include <QWidget>
+#include <QFileDialog>
+#include <QImageReader>
 
 namespace View
 {
@@ -148,6 +150,19 @@ namespace View
         budgetLayout->addWidget(budgetLabel);
         budgetLayout->addWidget(budgetLineEdit);
 
+        // Create cover image layout
+        coverImageLayout = new QHBoxLayout;
+        coverImageLabel = new QLabel("Cover Image:", this);
+        coverImagePreview = new QLabel(this);
+        coverImagePreview->setFixedSize(100, 100);
+        coverImagePreview->setScaledContents(true);
+        selectCoverButton = new QPushButton("Select Image", this);
+        connect(selectCoverButton, &QPushButton::clicked, this, &AddMediaDialogueWindow::selectCoverImage);
+        
+        coverImageLayout->addWidget(coverImageLabel);
+        coverImageLayout->addWidget(coverImagePreview);
+        coverImageLayout->addWidget(selectCoverButton);
+
         // Create buttons layout
         buttonsLayout = new QHBoxLayout;
 
@@ -182,6 +197,7 @@ namespace View
         mainLayout->addLayout(publisherLayout);
         mainLayout->addLayout(genreLayout);
         mainLayout->addLayout(budgetLayout);
+        mainLayout->addLayout(coverImageLayout);
         mainLayout->addLayout(buttonsLayout);
 
         // Set main layout as window layout
@@ -266,6 +282,9 @@ namespace View
             
             media = new Media::Article(id, title, currentDate, author, description, 
                                      journal, volume, pages, doi);
+            if (!selectedCoverPath.isEmpty()) {
+                media->setCoverImage(selectedCoverPath.toStdString());
+            }
         } 
         else if (type == "Audio") {
             bool durationOk = true;
@@ -289,6 +308,9 @@ namespace View
             
             media = new Media::Audio(id, title, currentDate, author, description,
                                    duration, format, artist, album);
+            if (!selectedCoverPath.isEmpty()) {
+                media->setCoverImage(selectedCoverPath.toStdString());
+            }
         } 
         else if (type == "Book") {
             bool pagesOk = true;
@@ -312,6 +334,9 @@ namespace View
             
             media = new Media::Book(id, title, currentDate, author, description,
                                   isbn, pages, publisher, genre);
+            if (!selectedCoverPath.isEmpty()) {
+                media->setCoverImage(selectedCoverPath.toStdString());
+            }
         } 
         else if (type == "Film") {
             bool durationOk = true;
@@ -340,6 +365,9 @@ namespace View
             
             media = new Media::Film(id, title, currentDate, director, description,
                                   director, duration, genre, budget);
+            if (!selectedCoverPath.isEmpty()) {
+                media->setCoverImage(selectedCoverPath.toStdString());
+            }
         } else {
             QMessageBox::critical(this, "Error", "Invalid media type selected!");
             return;
@@ -437,6 +465,24 @@ namespace View
             genreLineEdit->setVisible(true);
             budgetLabel->setVisible(true);
             budgetLineEdit->setVisible(true);
+        }
+    }
+
+    // Slot to handle cover image selection
+    void AddMediaDialogueWindow::selectCoverImage() {
+        QString fileName = QFileDialog::getOpenFileName(this,
+            tr("Select Cover Image"), "",
+            tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+        
+        if (!fileName.isEmpty()) {
+            QImage image(fileName);
+            if (!image.isNull()) {
+                selectedCoverPath = fileName;
+                coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(
+                    coverImagePreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            } else {
+                QMessageBox::critical(this, "Error", "Failed to load the selected image!");
+            }
         }
     }
 

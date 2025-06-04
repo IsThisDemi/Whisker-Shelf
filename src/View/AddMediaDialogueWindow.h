@@ -16,6 +16,8 @@ namespace View
         QLabel *nameLabel;
         QLabel *descriptionLabel;
         QLabel *brandLabel;
+        QLabel *coverImageLabel;
+        QLabel *coverImagePreview;
         QLabel *pagesLabel;
         QLabel *durationLabel;
         QLabel *genreLabel;
@@ -71,7 +73,11 @@ namespace View
         QHBoxLayout *isbnLayout;
         QHBoxLayout *publisherLayout;
         QHBoxLayout *budgetLayout;
+        QHBoxLayout *coverImageLayout;
         QHBoxLayout *buttonsLayout;
+        
+        QPushButton *selectCoverButton;
+        QString selectedCoverPath;
 
     signals:
         void createAndAddSignal();
@@ -81,6 +87,7 @@ namespace View
         void createAndAddSlot();
         void discardChanges();
         void onTypeChanged(int index);
+        void selectCoverImage();
 
     public:
         explicit AddMediaDialogueWindow(AbstractDialogueWindow *parent = nullptr);

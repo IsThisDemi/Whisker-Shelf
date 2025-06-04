@@ -348,7 +348,7 @@ namespace View
     }
 
     // Update media data and widget
-    void AboveChartWidget::saveModify(Media::AbstractMedia *media, const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, [[maybe_unused]] const double &value4)
+    void AboveChartWidget::saveModify(Media::AbstractMedia *media, const std::string &name, const std::string &description, const std::string &brand, const double &value1, [[maybe_unused]] const double &value2, const std::string &value3, [[maybe_unused]] const double &value4)
     {
         if (dynamic_cast<Media::Article *>(media))
         {

@@ -17,6 +17,7 @@ namespace Media {
             std::string publishDate;
             std::string author;
             std::string description;
+            std::string coverImage;
             MediaObserver *observer;
         
         protected:
@@ -25,7 +26,8 @@ namespace Media {
                 const std::string title, 
                 const std::string publishDate, 
                 const std::string author,
-                const std::string description
+                const std::string description,
+                const std::string coverImage = ""
             );
         
         public:
@@ -39,6 +41,9 @@ namespace Media {
             AbstractMedia& setAuthor(const std::string author);
             const std::string getDescription() const;
             AbstractMedia& setDescription(const std::string description);
+            
+            const std::string getCoverImage() const;
+            AbstractMedia& setCoverImage(const std::string coverImage);
 
             MediaObserver* getObserver() const;
             void setObserver(MediaObserver *newObserver);

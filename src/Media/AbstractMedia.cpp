@@ -9,7 +9,8 @@ namespace Media
         const std::string title,
         const std::string publishDate,
         const std::string author,
-        const std::string description) : id(id), title(title), publishDate(publishDate), author(author), description(description) {}
+        const std::string description,
+        const std::string coverImage) : id(id), title(title), publishDate(publishDate), author(author), description(description), coverImage(coverImage) {}
 
     // Destructor
     // Default destructor
@@ -87,5 +88,19 @@ namespace Media
     void AbstractMedia::setObserver(MediaObserver *newObserver)
     {
         observer = newObserver;
+    }
+
+    // Get the cover image path of the media
+    const std::string AbstractMedia::getCoverImage() const
+    {
+        return coverImage;
+    }
+
+    // Set the cover image path of the media
+    // Return a reference to the media
+    AbstractMedia& AbstractMedia::setCoverImage(const std::string coverImage)
+    {
+        this->coverImage = coverImage;
+        return *this;
     }
 }
