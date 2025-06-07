@@ -8,21 +8,37 @@ namespace View
     {
         layout = new QVBoxLayout(this);
         imageLabel = new QLabel(this);
-        imageLabel->setScaledContents(true);
+        imageLabel->setScaledContents(false);
+        imageLabel->setAlignment(Qt::AlignCenter);
         imageLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         layout->addWidget(imageLabel);
+        layout->setAlignment(Qt::AlignCenter);
         setLayout(layout);
+    }
+
+    void ImageCoverWidget::resizeEvent(QResizeEvent *event)
+    {
+        QWidget::resizeEvent(event);
+        if (!currentImagePath.isEmpty()) {
+            setImage(currentImagePath);
+        }
     }
 
     void ImageCoverWidget::setImage(const QString &imagePath)
     {
+        currentImagePath = imagePath;
         QPixmap pixmap(imagePath);
         if (!pixmap.isNull()) {
-            imageLabel->setPixmap(pixmap);
+            // Scala l'immagine mantenendo l'aspect ratio per adattarla al widget
+            QSize widgetSize = size();
+            QPixmap scaledPixmap = pixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            imageLabel->setPixmap(scaledPixmap);
         } else {
             // Se non c'è immagine, mostra un'immagine placeholder
             QPixmap defaultPixmap(":/Assets/Icons/media.png");
-            imageLabel->setPixmap(defaultPixmap);
+            QSize widgetSize = size();
+            QPixmap scaledPixmap = defaultPixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            imageLabel->setPixmap(scaledPixmap);
         }
     }
 

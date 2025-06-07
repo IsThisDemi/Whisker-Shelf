@@ -14,6 +14,10 @@ namespace View
     private:
         QVBoxLayout *layout;
         QLabel *imageLabel;
+        QString currentImagePath; // Mantiene il path dell'immagine corrente
+
+    protected:
+        void resizeEvent(QResizeEvent *event) override;
 
     public:
         ImageCoverWidget(QWidget *parent = nullptr);
