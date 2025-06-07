@@ -11,8 +11,9 @@ namespace Media
         const std::string journalName,
         const std::string volumeNumber,
         const unsigned int pageCount,
-        const std::string doi)
-        : AbstractMedia(id, title, publishDate, author, description),
+        const std::string doi,
+        const std::string coverImage)
+        : AbstractMedia(id, title, publishDate, author, description, coverImage),
           journalName(journalName),
           volumeNumber(volumeNumber),
           pageCount(pageCount),
@@ -61,6 +62,17 @@ namespace Media
     Article &Article::setDoi(const std::string doi)
     {
         this->doi = doi;
+        return *this;
+    }
+
+    const std::string Article::getCoverImage() const
+    {
+        return AbstractMedia::getCoverImage();
+    }
+
+    Article &Article::setCoverImage(const std::string coverImage)
+    {
+        AbstractMedia::setCoverImage(coverImage);
         return *this;
     }
 

@@ -11,8 +11,9 @@ namespace Media
         const unsigned int duration,
         const std::string format,
         const std::string artist,
-        const std::string album)
-        : AbstractMedia(id, title, publishDate, author, description),
+        const std::string album,
+        const std::string coverImage)
+        : AbstractMedia(id, title, publishDate, author, description, coverImage),
           duration(duration),
           format(format),
           artist(artist),

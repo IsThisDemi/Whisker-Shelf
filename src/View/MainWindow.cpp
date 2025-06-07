@@ -1,26 +1,37 @@
 #include "MainWindow.h"
 
 #include <stdexcept>
+#include <QFile>
+
 namespace View
 {
 
     // Constructor for MainWindow
     MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), repository(nullptr), isSaved(true), centralWidget(nullptr), mainLayout(nullptr), centralLayout(nullptr), toolbarLayout(nullptr),
-          statusBar(nullptr), mediaPanel(nullptr), aboveChartWidget(nullptr), toolBar(nullptr)
+          rightPanelLayout(nullptr), statusBar(nullptr), mediaPanel(nullptr), aboveImageWidget(nullptr), imageCoverWidget(nullptr), toolBar(nullptr)
     {
         setWindowTitle("WhiskerShelf");
 
         // Create layouts
         mainLayout = new QVBoxLayout;
         centralLayout = new QHBoxLayout;
-        aboveChartWidget = new AboveChartWidget(this);
-
+        rightPanelLayout = new QVBoxLayout;
         toolbarLayout = new QHBoxLayout;
 
         // Create widgets
         mediaPanel = new MediaPanel(medias, this);
         mediaPanel->setFixedWidth(500);
+
+        aboveImageWidget = new AboveImageWidget(this);
+        aboveImageWidget->setMinimumWidth(714);
+        aboveImageWidget->setMinimumHeight(85);
+        aboveImageWidget->setObjectName("AboveImageWidget");
+
+        imageCoverWidget = new ImageCoverWidget(this);
+        imageCoverWidget->setMinimumWidth(714);
+        imageCoverWidget->setMinimumHeight(300);
+        imageCoverWidget->setObjectName("ImageCoverWidget");
 
 
 
@@ -39,8 +50,13 @@ namespace View
         // Add widgets to layouts
 
 
-        centralLayout->addWidget(mediaPanel);
+        // Add widgets to layouts
+        rightPanelLayout->addWidget(aboveImageWidget);
+        rightPanelLayout->addWidget(imageCoverWidget);
+        rightPanelLayout->setAlignment(Qt::AlignTop);
 
+        centralLayout->addWidget(mediaPanel);
+        centralLayout->addLayout(rightPanelLayout);
 
         mainLayout->addLayout(centralLayout);
         mainLayout->addLayout(toolbarLayout);
@@ -68,10 +84,9 @@ namespace View
         connect(mediaPanel, &MediaPanel::createAndAddMediaSignal, this, &MainWindow::createAndAddMediaHandler);
         connect(this, &MainWindow::youCanCheckIfNameAndIDAreUnique, mediaPanel, &MediaPanel::youCanCheckIfNameAndIDAreUnique);
 
-
-        connect(aboveChartWidget, &AboveChartWidget::setIsSaved, this, &MainWindow::setIsSaved);
-        connect(aboveChartWidget, &AboveChartWidget::nameHasBeenModified, this, &MainWindow::nameModifiedHandler);
-        connect(aboveChartWidget, &AboveChartWidget::mediaDeleted, this, &MainWindow::mediaDeletedHandler);
+        connect(aboveImageWidget, &AboveImageWidget::setIsSaved, this, &MainWindow::setIsSaved);
+        connect(aboveImageWidget, &AboveImageWidget::nameHasBeenModified, this, &MainWindow::nameModifiedHandler);
+        connect(aboveImageWidget, &AboveImageWidget::mediaDeleted, this, &MainWindow::mediaDeletedHandler);
     }
 
     // Check if there are any unsaved changes and ask the user if they want to save them
@@ -102,7 +117,8 @@ namespace View
 
             // Recreate the interface
             mediaPanel->createPanel(medias);
-            aboveChartWidget->createGreyPanel();
+            aboveImageWidget->createGreyPanel();
+            imageCoverWidget->setImage("");
 
             // Mark as saved and disable save as action
             setIsSaved(true);
@@ -117,7 +133,7 @@ namespace View
     {
         try
         {
-            unsigned int id = aboveChartWidget->getId();
+            unsigned int id = aboveImageWidget->getId();
 
             for (Media::AbstractMedia *media : medias)
             {
@@ -240,7 +256,8 @@ namespace View
     {
         if (mediaWidgets.empty())
         {
-            aboveChartWidget->createGreyPanel();
+            aboveImageWidget->createGreyPanel();
+            imageCoverWidget->setImage("");
             statusBar->updateAfterResearch(0);
         }
         else
@@ -272,7 +289,26 @@ namespace View
                 if (media->getId() == id)
                 {
                     mediaPanel->setColors(nullptr, media);
-                    aboveChartWidget->createAboveChartForMedia(media);
+                    aboveImageWidget->createAboveImageForMedia(media);
+                    
+                    // Prima prova a usare l'immagine di copertina del media
+                    QString coverImage = QString::fromStdString(media->getCoverImage());
+                    if (!coverImage.isEmpty() && QFile::exists(coverImage)) {
+                        imageCoverWidget->setImage(coverImage);
+                    } else {
+                        // Se non c'è un'immagine di copertina, usa l'icona predefinita
+                        QString imagePath;
+                        if (dynamic_cast<Media::Article *>(media))
+                            imagePath = ":/Assets/Icons/article.png";
+                        else if (dynamic_cast<Media::Audio *>(media))
+                            imagePath = ":/Assets/Icons/audio.png";
+                        else if (dynamic_cast<Media::Book *>(media))
+                            imagePath = ":/Assets/Icons/book.png";
+                        else if (dynamic_cast<Media::Film *>(media))
+                            imagePath = ":/Assets/Icons/film.png";
+                        imageCoverWidget->setImage(imagePath);
+                    }
+                    
                     statusBar->updateAfterMediaSelected();
                     return;
                 }
@@ -328,7 +364,7 @@ namespace View
     // Activates the "Modify" button
     void MainWindow::modifyHandler()
     {
-        aboveChartWidget->modify(getCurrentlySelectedMedia());
+        aboveImageWidget->modify(getCurrentlySelectedMedia());
     }
 
     // Emits a signal to check if the name is unique
@@ -340,7 +376,7 @@ namespace View
     // Saves the modified values of the currently selected media
     void MainWindow::saveModifyHandler(const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, const double &value4)
     {
-        aboveChartWidget->saveModify(getCurrentlySelectedMedia(), name, description, brand, value1, value2, value3, value4);
+        aboveImageWidget->saveModify(getCurrentlySelectedMedia(), name, description, brand, value1, value2, value3, value4);
     }
 
     // Modifies the name of the currently selected media in the MediaPanel
@@ -381,7 +417,8 @@ namespace View
         }
         else
         { // If "medias" is empty, recreate the initial screen
-            aboveChartWidget->createGreyPanel();
+            aboveImageWidget->createGreyPanel();
+            imageCoverWidget->setImage("");
             statusBar->updateBecauseMediaPanelIsEmpty();
 
             // Since the user has deleted all the medias, the "Save with name" button is disabled
@@ -413,7 +450,8 @@ namespace View
         // Delete the widgets and layouts
         delete toolBar;
         delete mediaPanel;
-        delete aboveChartWidget;
+        delete aboveImageWidget;
+        delete imageCoverWidget;
         delete statusBar;
 
         delete centralLayout;

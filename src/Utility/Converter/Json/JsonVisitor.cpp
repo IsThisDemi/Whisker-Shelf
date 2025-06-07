@@ -24,6 +24,7 @@ namespace Utility
                 article_object.insert("publishDate", QJsonValue::fromVariant(article.getPublishDate().c_str()));
                 article_object.insert("author", QJsonValue::fromVariant(article.getAuthor().c_str()));
                 article_object.insert("description", QJsonValue::fromVariant(article.getDescription().c_str()));
+                article_object.insert("coverImage", QJsonValue::fromVariant(article.getCoverImage().c_str()));
                 article_object.insert("journalName", QJsonValue::fromVariant(article.getJournalName().c_str()));
                 article_object.insert("volumeNumber", QJsonValue::fromVariant(article.getVolumeNumber().c_str()));
                 article_object.insert("pageCount", QJsonValue::fromVariant(article.getPageCount()));
@@ -41,6 +42,7 @@ namespace Utility
                 audio_object.insert("publishDate", QJsonValue::fromVariant(audio.getPublishDate().c_str()));
                 audio_object.insert("author", QJsonValue::fromVariant(audio.getAuthor().c_str()));
                 audio_object.insert("description", QJsonValue::fromVariant(audio.getDescription().c_str()));
+                audio_object.insert("coverImage", QJsonValue::fromVariant(audio.getCoverImage().c_str()));
                 audio_object.insert("duration", QJsonValue::fromVariant(audio.getDuration()));
                 audio_object.insert("format", QJsonValue::fromVariant(audio.getFormat().c_str()));
                 audio_object.insert("artist", QJsonValue::fromVariant(audio.getArtist().c_str()));
@@ -58,6 +60,7 @@ namespace Utility
                 book_object.insert("publishDate", QJsonValue::fromVariant(book.getPublishDate().c_str()));
                 book_object.insert("author", QJsonValue::fromVariant(book.getAuthor().c_str()));
                 book_object.insert("description", QJsonValue::fromVariant(book.getDescription().c_str()));
+                book_object.insert("coverImage", QJsonValue::fromVariant(book.getCoverImage().c_str()));
                 book_object.insert("isbn", QJsonValue::fromVariant(book.getIsbn().c_str()));
                 book_object.insert("pageCount", QJsonValue::fromVariant(book.getPageCount()));
                 book_object.insert("publisher", QJsonValue::fromVariant(book.getPublisher().c_str()));
@@ -75,6 +78,7 @@ namespace Utility
                 film_object.insert("publishDate", QJsonValue::fromVariant(film.getPublishDate().c_str()));
                 film_object.insert("author", QJsonValue::fromVariant(film.getAuthor().c_str()));
                 film_object.insert("description", QJsonValue::fromVariant(film.getDescription().c_str()));
+                film_object.insert("coverImage", QJsonValue::fromVariant(film.getCoverImage().c_str()));
                 film_object.insert("director", QJsonValue::fromVariant(film.getDirector().c_str()));
                 film_object.insert("duration", QJsonValue::fromVariant(film.getDuration()));
                 film_object.insert("genre", QJsonValue::fromVariant(film.getGenre().c_str()));

@@ -23,7 +23,8 @@ namespace Media
             const unsigned int duration,
             const std::string format,
             const std::string artist,
-            const std::string album);
+            const std::string album,
+            const std::string coverImage = "");
 
         // Getters
         unsigned int getDuration() const;

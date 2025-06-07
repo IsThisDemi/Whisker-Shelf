@@ -12,6 +12,7 @@ namespace Media
         std::string volumeNumber; /// Volume/numero della rivista
         unsigned int pageCount;   /// Numero di pagine
         std::string doi;          /// Digital Object Identifier
+        std::string coverImage;   /// Copertina dell'articolo
 
     public:
         Article(
@@ -23,26 +24,29 @@ namespace Media
             const std::string journalName,
             const std::string volumeNumber,
             const unsigned int pageCount,
-            const std::string doi);
+            const std::string doi,
+            const std::string coverImage = "");
 
         // Getters
         const std::string &getJournalName() const;
         const std::string &getVolumeNumber() const;
         unsigned int getPageCount() const;
         const std::string &getDoi() const;
+        const std::string getCoverImage() const override;
 
         // Setters con method chaining
         Article &setJournalName(const std::string journalName);
         Article &setVolumeNumber(const std::string volumeNumber);
         Article &setPageCount(const unsigned int pageCount);
         Article &setDoi(const std::string doi);
+        Article& setCoverImage(const std::string coverImage) override;
 
         // Clone method
-        Article *clone() const;
+        Article *clone() const override;
 
         // Visitor pattern methods
-        void accept(IConstVisitor &visitor) const;
-        void accept(IVisitor &visitor);
+        void accept(IConstVisitor &visitor) const override;
+        void accept(IVisitor &visitor) override;
     };
 }
 

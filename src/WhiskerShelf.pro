@@ -28,6 +28,7 @@ SOURCES += \
     \
     View/MainWindow.cpp\
     View/AboveChartLabelsCreatorVisitor.cpp\
+    View/AboveImageLabelsCreatorVisitor.cpp\
     View/AboveChartWidget.cpp\
     View/AbstractDialogueWindow.cpp\
     View/AddMediaDialogueWindow.cpp\
@@ -36,7 +37,9 @@ SOURCES += \
     View/MediaWidget.cpp\
     View/SetTypeAndIconOfMediaWidgetVisitor.cpp\
     View/StatusBar.cpp\
-    View/ToolBar.cpp
+    View/ToolBar.cpp\
+    View/AboveImageWidget.cpp\
+    View/ImageCoverWidget.cpp
 
 HEADERS += \
     Utility/Converter/Json/IReader.h\
@@ -60,6 +63,7 @@ HEADERS += \
     \
     View/MainWindow.h\
     View/AboveChartLabelsCreatorVisitor.h\
+    View/AboveImageLabelsCreatorVisitor.h\
     View/AboveChartWidget.h\
     View/AbstractDialogueWindow.h\
     View/AddMediaDialogueWindow.h\
@@ -68,7 +72,9 @@ HEADERS += \
     View/MediaWidget.h\
     View/SetTypeAndIconOfMediaWidgetVisitor.h\
     View/StatusBar.h\
-    View/ToolBar.h
+    View/ToolBar.h\
+    View/AboveImageWidget.h\
+    View/ImageCoverWidget.h
 
 RESOURCES += \
     resources.qrc

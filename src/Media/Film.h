@@ -23,7 +23,8 @@ namespace Media
             const std::string director,
             const unsigned int duration,
             const std::string genre,
-            const double budget);
+            const double budget,
+            const std::string coverImage = "");
 
         // Getters
         const std::string &getDirector() const;

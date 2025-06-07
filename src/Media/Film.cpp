@@ -11,8 +11,9 @@ namespace Media
         const std::string director,
         const unsigned int duration,
         const std::string genre,
-        const double budget)
-        : AbstractMedia(id, title, publishDate, author, description),
+        const double budget,
+        const std::string coverImage)
+        : AbstractMedia(id, title, publishDate, author, description, coverImage),
           director(director),
           duration(duration),
           genre(genre),

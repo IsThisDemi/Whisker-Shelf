@@ -42,8 +42,8 @@ namespace Media {
             const std::string getDescription() const;
             AbstractMedia& setDescription(const std::string description);
             
-            const std::string getCoverImage() const;
-            AbstractMedia& setCoverImage(const std::string coverImage);
+            virtual const std::string getCoverImage() const;
+            virtual AbstractMedia& setCoverImage(const std::string coverImage);
 
             MediaObserver* getObserver() const;
             void setObserver(MediaObserver *newObserver);

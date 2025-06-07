@@ -11,8 +11,9 @@ namespace Media
         const std::string isbn,
         const unsigned int pageCount,
         const std::string publisher,
-        const std::string genre)
-        : AbstractMedia(id, title, publishDate, author, description),
+        const std::string genre,
+        const std::string coverImage)
+        : AbstractMedia(id, title, publishDate, author, description, coverImage),
           isbn(isbn),
           pageCount(pageCount),
           publisher(publisher),
@@ -39,6 +40,17 @@ namespace Media
     Book &Book::setPageCount(const unsigned int pageCount)
     {
         this->pageCount = pageCount;
+        return *this;
+    }
+
+    const std::string Book::getCoverImage() const
+    {
+        return AbstractMedia::getCoverImage();
+    }
+
+    Book &Book::setCoverImage(const std::string coverImage)
+    {
+        AbstractMedia::setCoverImage(coverImage);
         return *this;
     }
 

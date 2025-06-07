@@ -12,7 +12,8 @@
 #include <vector>
 
 #include "Utility/Repository/JsonRepository.h"
-#include "AboveChartWidget.h"
+#include "AboveImageWidget.h"
+#include "ImageCoverWidget.h"
 #include "MediaPanel.h"
 #include "StatusBar.h"
 #include "ToolBar.h"
@@ -33,10 +34,12 @@ namespace View
         QVBoxLayout *mainLayout;
         QHBoxLayout *centralLayout;
         QHBoxLayout *toolbarLayout;
+        QVBoxLayout *rightPanelLayout;
 
         StatusBar *statusBar;
         MediaPanel *mediaPanel;
-        AboveChartWidget *aboveChartWidget;
+        AboveImageWidget *aboveImageWidget;
+        ImageCoverWidget *imageCoverWidget;
         ToolBar *toolBar;
 
     signals:

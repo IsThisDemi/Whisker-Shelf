@@ -61,7 +61,8 @@ namespace Utility {
                     object.value("journalName").toString().toStdString(),
                     object.value("volumeNumber").toString().toStdString(),
                     object.value("pageCount").toInt(),
-                    object.value("doi").toString().toStdString()
+                    object.value("doi").toString().toStdString(),
+                    object.value("coverImage").toString().toStdString()
                 );
             }
 
@@ -76,7 +77,8 @@ namespace Utility {
                     object.value("duration").toDouble(),
                     object.value("format").toString().toStdString(),
                     object.value("artist").toString().toStdString(),
-                    object.value("album").toString().toStdString()
+                    object.value("album").toString().toStdString(),
+                    object.value("coverImage").toString().toStdString()
                 );
             }
 
@@ -91,7 +93,8 @@ namespace Utility {
                     object.value("isbn").toString().toStdString(),
                     object.value("pageCount").toInt(),
                     object.value("publisher").toString().toStdString(),
-                    object.value("genre").toString().toStdString()
+                    object.value("genre").toString().toStdString(),
+                    object.value("coverImage").toString().toStdString()
                 );
             }
 
@@ -106,7 +109,8 @@ namespace Utility {
                     object.value("director").toString().toStdString(),
                     object.value("duration").toDouble(),
                     object.value("genre").toString().toStdString(),
-                    object.value("budget").toDouble()
+                    object.value("budget").toDouble(),
+                    object.value("coverImage").toString().toStdString()
                 );
             }
         }
