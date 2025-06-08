@@ -161,15 +161,23 @@ namespace View
     // Destructor, delete all widgets
     MediaWidget::~MediaWidget()
     {
-        delete iconLabel;
-
-        delete nameLabel;
-        delete idLabel;
+        // Delete owned widgets in reverse order of creation
         delete dataLabel;
-
+        delete idLabel;
+        delete nameLabel;
+        delete iconLabel;
         delete dataLayout;
-        delete backgroundWidget;
         delete layout;
+        delete backgroundWidget;
+        
+        // Set pointers to nullptr to prevent use-after-free
+        dataLabel = nullptr;
+        idLabel = nullptr;
+        nameLabel = nullptr;
+        iconLabel = nullptr;
+        dataLayout = nullptr;
+        layout = nullptr;
+        backgroundWidget = nullptr;
     }
 
 }

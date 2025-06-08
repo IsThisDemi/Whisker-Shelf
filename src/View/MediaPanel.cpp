@@ -24,14 +24,12 @@ namespace View
 
     void MediaPanel::createPanel(const std::vector<Media::AbstractMedia *> &medias)
     {
-        // Remove all dynamically allocated objects from before
+        // Clear the widgets vector first without deleting (deletion happens in destructor)
+        mediaWidgets.clear();
+
+        // Delete only the UI components that are not in mediaWidgets
         delete searchBar;
         delete returnBackButton;
-        for (MediaWidget *widget : mediaWidgets)
-        {
-            delete widget;
-        }
-        mediaWidgets.clear();
         delete addMediaButton;
         delete addWindow;
         delete mediaLayout;
@@ -40,7 +38,7 @@ namespace View
         delete searchLayout;
         delete mainLayout;
 
-        // Set pointers a nullptr
+        // Set pointers to nullptr
         searchBar = nullptr;
         returnBackButton = nullptr; 
         addMediaButton = nullptr;
@@ -502,27 +500,28 @@ namespace View
     }
 
     // Destructor that deletes all dynamically allocated objects
-    MediaPanel::~MediaPanel()
-    {
-        delete searchBar;
-        // delete goButton;
-        delete returnBackButton;
-
-        for (MediaWidget *widget : mediaWidgets)
-        {
-            delete widget;
+    MediaPanel::~MediaPanel() {
+        // Delete all MediaWidget instances
+        for (MediaWidget* widget : mediaWidgets) {
+            if (widget) {
+                delete widget;
+            }
         }
         mediaWidgets.clear();
-
+        
+        // Delete other UI components
+        delete searchBar;
+        delete returnBackButton;
         delete addMediaButton;
-
         delete addWindow;
-
         delete mediaLayout;
         delete mediaWidgetContainer;
         delete scrollArea;
         delete searchLayout;
         delete mainLayout;
+        
+        // The temporary mediaWidget pointer should not be deleted here as it's managed elsewhere
+        // medias vector is not owned by this class, so we don't delete its contents
     }
 
 }
