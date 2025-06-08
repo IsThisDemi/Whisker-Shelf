@@ -75,29 +75,24 @@ namespace View
 
         if (!medias.empty())
         {
-            mediaLayout = new QGridLayout();
-            mediaLayout->setSpacing(30);
+            // Create vertical layout for media items
+            mediaLayout = new QVBoxLayout();
+            mediaLayout->setSpacing(12);
+            mediaLayout->setContentsMargins(12, 12, 12, 12);
+            mediaLayout->setAlignment(Qt::AlignTop);
 
-            int row = 0;
-            int column = 0;
-            const int maxColumns = 3; // Maximum number of columns before wrapping to the next row
+            // Configure scroll area
+            scrollArea->setWidgetResizable(true);
+            scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
             for (Media::AbstractMedia *media : medias)
             {
                 mediaWidget = new MediaWidget(this);
                 updateMediaWidget(mediaWidget, media);
-
-                mediaLayout->addWidget(mediaWidget, row, column); // Add widget to grid layout
-                mediaWidgets.push_back(mediaWidget);              // Add widget to list
-
-                // Update row and column
-                column++;
-                if (column >= maxColumns)
-                {
-                    column = 0;
-                    row++;
-                }
-
+                
+                mediaLayout->addWidget(mediaWidget);
+                mediaWidgets.push_back(mediaWidget);
+                
                 mediaWidget = nullptr;
             }
 
@@ -198,12 +193,11 @@ namespace View
         // Sort the keys of the map multiplier in ascending order based on the length of the longest common substring
         std::sort(sortedKeys.begin(), sortedKeys.end());
 
-        mediaLayout = new QGridLayout(); // Use QGridLayout instead of QFlowLayout
-
-        int row = 0;
-        int column = 0;
-        const int maxColumns = 3; // Maximum number of columns before wrapping to the next row
-
+        mediaLayout = new QVBoxLayout();
+        mediaLayout->setSpacing(12);
+        mediaLayout->setContentsMargins(12, 12, 12, 12);
+        mediaLayout->setAlignment(Qt::AlignTop);
+        
         // Add medias to the scroll area layout based on the ordering
         for (int i = sortedKeys.size() - 1; i >= 0; --i)
         {
@@ -214,21 +208,11 @@ namespace View
             {
                 // Create a widget to display the media
                 mediaWidget = new MediaWidget(this);
-
                 updateMediaWidget(mediaWidget, media);
 
-                mediaLayout->addWidget(mediaWidget, row, column); // Add widget to grid layout
-                mediaWidgets.push_back(mediaWidget);              // Add to MediaWidgets vector
-
-                // Update row and column
-                column++;
-                if (column >= maxColumns)
-                {
-                    column = 0;
-                    row++;
-                }
-
-                // Now that it made a shallow copy, mediaWidget can "cut its string"
+                mediaLayout->addWidget(mediaWidget);
+                mediaWidgets.push_back(mediaWidget);
+                
                 mediaWidget = nullptr;
             }
         }

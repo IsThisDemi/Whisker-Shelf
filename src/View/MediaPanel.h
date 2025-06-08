@@ -32,7 +32,7 @@ namespace View
         QLineEdit *searchBar;
         QPushButton *returnBackButton;
 
-        QGridLayout *mediaLayout;
+        QVBoxLayout *mediaLayout;
         QScrollArea *scrollArea;
         std::vector<MediaWidget *> mediaWidgets;
         QWidget *mediaWidgetContainer;

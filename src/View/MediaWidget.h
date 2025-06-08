@@ -16,14 +16,17 @@ namespace View
         Q_OBJECT
     private:
         QWidget *backgroundWidget;
-        QVBoxLayout *layout;
+        QHBoxLayout *layout;
 
+        // Left section with icon
         QLabel *iconLabel;
 
+        // Right section with data
         QVBoxLayout *dataLayout;
         QLabel *nameLabel;
         QLabel *idLabel;
         QLabel *dataLabel;
+        QLabel *descriptionLabel;  // New label for extra info
     
     signals:
         void selected(MediaWidget *sender);

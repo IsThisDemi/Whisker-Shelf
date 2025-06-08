@@ -7,59 +7,80 @@ namespace View
     // Constructor for MediaWidget
     MediaWidget::MediaWidget(QWidget *parent) : QWidget(parent)
     {
+        // Create main layout for this widget
+        QVBoxLayout* mainLayout = new QVBoxLayout(this);
+        mainLayout->setContentsMargins(0, 0, 0, 0);
+        mainLayout->setSpacing(0);
+
         // Create custom background widget
         backgroundWidget = new QWidget(this);
         backgroundWidget->setObjectName("backgroundWidget");
-        backgroundWidget->setFixedSize(124, 124);
+        backgroundWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
         // Set layout for background widget
-        layout = new QVBoxLayout(backgroundWidget);
-        layout->setAlignment(Qt::AlignHCenter);
+        layout = new QHBoxLayout(backgroundWidget);
+        layout->setContentsMargins(16, 12, 16, 12);
+        layout->setSpacing(16);
 
         // Create icon and set its size
         iconLabel = new QLabel(this);
         iconLabel->setObjectName("iconLabel");
-        iconLabel->setFixedSize(50, 50);
-        iconLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        iconLabel->setFixedSize(64, 64);
+        iconLabel->setAlignment(Qt::AlignCenter);
 
-        // Add icon to background widget layout
-        layout->addWidget(iconLabel, 0, Qt::AlignHCenter);
-
-        // Create layout for data labels
-        dataLayout = new QVBoxLayout;
-        dataLayout->setAlignment(Qt::AlignHCenter);
+        // Create container for data section
+        QWidget* dataContainer = new QWidget(backgroundWidget);
+        dataContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+        
+        dataLayout = new QVBoxLayout(dataContainer);
+        dataLayout->setContentsMargins(0, 0, 0, 0);
+        dataLayout->setSpacing(2);
 
         // Create labels for media data
-        nameLabel = new QLabel(backgroundWidget);
+        nameLabel = new QLabel(dataContainer);
         nameLabel->setObjectName("nameLabel");
-        idLabel = new QLabel(backgroundWidget);
+        nameLabel->setWordWrap(true);
+        nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+        
+        idLabel = new QLabel(dataContainer);
         idLabel->setObjectName("idLabel");
-        dataLabel = new QLabel(backgroundWidget);
+        idLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+        
+        dataLabel = new QLabel(dataContainer);
         dataLabel->setObjectName("dataLabel");
+        dataLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+        
+        descriptionLabel = new QLabel(dataContainer);
+        descriptionLabel->setObjectName("descriptionLabel");
+        descriptionLabel->setWordWrap(true);
 
-        // Set font size for media name label
-        QFont font = nameLabel->font();
-        font.setPointSize(16);
-        nameLabel->setFont(font);
-        nameLabel->setContentsMargins(0,0,0,0);
+        // Set fonts and styles
+        QFont titleFont = nameLabel->font();
+        titleFont.setPointSize(13);
+        titleFont.setWeight(QFont::DemiBold);
+        nameLabel->setFont(titleFont);
 
-        // Set font size for media data label
-        font = dataLabel->font();
-        font.setPointSize(24);
-        dataLabel->setFont(font);
-        dataLabel->setContentsMargins(0,0,0,0);
+        QFont dataFont = dataLabel->font();
+        dataFont.setPointSize(12);
+        dataLabel->setFont(dataFont);
+        
+        QFont descFont = descriptionLabel->font();
+        descFont.setPointSize(11);
+        descriptionLabel->setFont(descFont);
 
-        // Add labels to data layout
-        dataLayout->addWidget(nameLabel, 0, Qt::AlignHCenter);
-        dataLayout->addWidget(idLabel, 0, Qt::AlignHCenter);
+        // Add widgets to layouts
+        layout->addWidget(iconLabel);
+        
+        dataLayout->addWidget(nameLabel);
+        dataLayout->addWidget(dataLabel);
+        dataLayout->addWidget(descriptionLabel);
+        dataLayout->addStretch();
+        dataLayout->addWidget(idLabel);
         idLabel->hide();
-        dataLayout->addWidget(dataLabel, 0, Qt::AlignHCenter);
-
-        // Add data layout to background widget layout
-        layout->addLayout(dataLayout);
-
-        // Set size of MediaWidget
-        setFixedSize(124, 124);
+        
+        layout->addWidget(dataContainer, 1);  // Give data section more stretch
+        
+        mainLayout->addWidget(backgroundWidget);
 
         // Set name for CSS styling
         setObjectName("MediaWidget");

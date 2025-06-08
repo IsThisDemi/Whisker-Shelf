@@ -1,24 +1,50 @@
-/* Sets the background color of the main window */
+/* Main window style */
 QMainWindow {
-  background-color: #1C2433;
+  background-color: #F5F7FA;
 }
 
-/* Sets the color of all labels */
-QLabel {
-  color: #4A90E2;
+/* MediaWidget styles */
+#backgroundWidget {
+  background-color: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
 }
 
-/* Sets the background color and border radius of the icon labels */
+#backgroundWidget:hover {
+  background-color: #F8FAFC;
+  border-color: #4A90E2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon label style */
 QLabel#iconLabel {
-  background-color: #2C3E50;
-  border-radius: 25px;
-  padding-left: 0px;
+  background-color: #EDF2F7;
+  border-radius: 12px;
+  padding: 8px;
 }
 
-/* Sets the color of the data and media name labels */
-QLabel#dataLabel,
-QLabel#mediaNameLabel {
-  color: #2C3E50;
+/* Text labels styles */
+QLabel#nameLabel {
+  color: #2D3748;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
+  min-height: 24px;
+}
+
+QLabel#dataLabel {
+  color: #4A5568;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
+}
+
+QLabel#descriptionLabel {
+  color: #718096;
+  line-height: 1.4;
+  margin: 4px 0 0 0;
+  padding: 0;
 }
 
 /* Sets the background color and border radius of the dialog */
