@@ -285,60 +285,37 @@ namespace View
     {
         Media::AbstractMedia *currentMedia = getCurrentlySelectedMedia();
 
-        if (currentMedia == nullptr) 
+        for (Media::AbstractMedia *media : medias)
         {
-            for (Media::AbstractMedia *media : medias)
+            if (media->getId() == id)
             {
-                if (media->getId() == id)
-                {
-                    mediaPanel->setColors(nullptr, media);
-                    aboveImageWidget->createAboveImageForMedia(media);
-                    
-                    // Prima prova a usare l'immagine di copertina del media
-                    QString coverImage = QString::fromStdString(media->getCoverImage());
-                    if (!coverImage.isEmpty() && QFile::exists(coverImage)) {
-                        imageCoverWidget->setImage(coverImage);
-                    } else {
-                        // Se non c'è un'immagine di copertina, usa l'icona predefinita
-                        QString imagePath;
-                        if (dynamic_cast<Media::Article *>(media))
-                            imagePath = ":/Assets/Icons/article.png";
-                        else if (dynamic_cast<Media::Audio *>(media))
-                            imagePath = ":/Assets/Icons/audio.png";
-                        else if (dynamic_cast<Media::Book *>(media))
-                            imagePath = ":/Assets/Icons/book.png";
-                        else if (dynamic_cast<Media::Film *>(media))
-                            imagePath = ":/Assets/Icons/film.png";
-                        imageCoverWidget->setImage(imagePath);
-                    }
-                    
-                    statusBar->updateAfterMediaSelected();
-                    return;
+                // Aggiorna i colori
+                mediaPanel->setColors(currentMedia, media);
+                
+                // Aggiorna AboveImageWidget
+                aboveImageWidget->createAboveImageForMedia(media);
+                
+                // Aggiorna ImageCoverWidget
+                QString coverImage = QString::fromStdString(media->getCoverImage());
+                if (!coverImage.isEmpty() && QFile::exists(coverImage)) {
+                    imageCoverWidget->setImage(coverImage);
+                } else {
+                    // Se non c'è un'immagine di copertina, usa l'icona predefinita
+                    QString imagePath;
+                    if (dynamic_cast<Media::Article *>(media))
+                        imagePath = ":/Assets/Icons/Medias/article.png";
+                    else if (dynamic_cast<Media::Audio *>(media))
+                        imagePath = ":/Assets/Icons/Medias/audio.png";
+                    else if (dynamic_cast<Media::Book *>(media))
+                        imagePath = ":/Assets/Icons/Medias/book.png";
+                    else if (dynamic_cast<Media::Film *>(media))
+                        imagePath = ":/Assets/Icons/Medias/movie.png";
+                    imageCoverWidget->setImage(imagePath);
                 }
-            }
-        }
-        else if (id != currentMedia->getId())
-        {
-            for (Media::AbstractMedia *media : medias)
-            {
-                if (media->getId() == id)
-                {
-                    mediaPanel->setColors(currentMedia, media);
-                    statusBar->updateAfterMediaSelected();
-                    return;
-                }
-            }
-        }
-        else
-        {
-            for (Media::AbstractMedia *media : medias)
-            {
-                if (media->getId() == id)
-                {
-                    mediaPanel->setColors(currentMedia, media);
-                    statusBar->updateAfterMediaSelected();
-                    return;
-                }
+                
+                // Aggiorna la barra di stato
+                statusBar->updateAfterMediaSelected();
+                return;
             }
         }
     }
