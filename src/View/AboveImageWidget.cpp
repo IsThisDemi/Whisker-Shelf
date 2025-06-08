@@ -28,6 +28,18 @@ namespace View
         if (!mediaValue2Label) mediaValue2Label = new QLabel(this);
         if (!mediaValue3Label) mediaValue3Label = new QLabel(this);
         if (!mediaValue4Label) mediaValue4Label = new QLabel(this);
+        
+        // Set object names and styles
+        mediaValue1Label->setObjectName("aboveValue1");
+        mediaValue2Label->setObjectName("aboveValue2");
+        mediaValue3Label->setObjectName("aboveValue3");
+        mediaValue4Label->setObjectName("aboveValue4");
+        
+        mediaValue1Label->setStyleSheet("QLabel#aboveValue1 { color: #2D3748; }");  // Dark gray
+        mediaValue2Label->setStyleSheet("QLabel#aboveValue2 { color: #2D3748; }");
+        mediaValue3Label->setStyleSheet("QLabel#aboveValue3 { color: #2D3748; }");
+        mediaValue4Label->setStyleSheet("QLabel#aboveValue4 { color: #2D3748; }");
+        
         mediaValue1Label->setText("Journal: " + QString::fromStdString(journalName));
         mediaValue2Label->setText("Volume: " + QString::fromStdString(volumeNumber));
         mediaValue3Label->setText("Pages: " + QString::number(pageCount));
@@ -157,26 +169,56 @@ namespace View
         QFont fontLabel = QFont();
         fontLabel.setPointSize(20);
 
+        // Set font, objectName and color for all labels
+        mediaTitleLabel->setFont(fontLabel);
+        mediaTitleLabel->setObjectName("mediaTitleLabel");
+        mediaTitleLabel->setStyleSheet("QLabel { color: #1A365D; }");
+
         mediaIDLabel = new QLabel(QString("ID: %1").arg(media->getId()), this);
         mediaIDLabel->setFont(fontLabel);
+        mediaIDLabel->setObjectName("mediaIDLabel");
+        mediaIDLabel->setStyleSheet("QLabel { color: #2D3748; }");
 
         mediaDescriptionLabel = new QLabel(QString("Description: %1").arg(QString::fromStdString(media->getDescription())), this);
         mediaDescriptionLabel->setFont(fontLabel);
+        mediaDescriptionLabel->setObjectName("mediaDescriptionLabel");
+        mediaDescriptionLabel->setStyleSheet("QLabel { color: #2D3748; }");
         mediaDescriptionLabel->setWordWrap(true);
 
         mediaAuthorLabel = new QLabel(QString("Author: %1").arg(QString::fromStdString(media->getAuthor())), this);
         mediaAuthorLabel->setFont(fontLabel);
+        mediaAuthorLabel->setObjectName("mediaAuthorLabel");
+        mediaAuthorLabel->setStyleSheet("QLabel { color: #2D3748; }");
         mediaDescriptionLabel->setWordWrap(true);
 
         // Usa il nuovo visitor dedicato per AboveImageWidget
         AboveImageLabelsCreatorVisitor aboveImageLabelsCreatorVisitor(this);
         media->accept(aboveImageLabelsCreatorVisitor);
 
-        // Set font size for media title label.
+        // Set styles and font for title label
         QFont fontTitle = mediaTitleLabel->font();
         fontTitle.setPointSize(36);
         mediaTitleLabel->setFont(fontTitle);
         mediaTitleLabel->setObjectName("mediaTitleLabel");
+        mediaTitleLabel->setStyleSheet("QLabel#mediaTitleLabel { color: #1A365D; }");
+
+        // Apply styles to value labels
+        if (mediaValue1Label) {
+            mediaValue1Label->setStyleSheet("QLabel { color: #2D3748; }");
+            mediaValue1Label->setFont(fontLabel);
+        }
+        if (mediaValue2Label) {
+            mediaValue2Label->setStyleSheet("QLabel { color: #2D3748; }");
+            mediaValue2Label->setFont(fontLabel);
+        }
+        if (mediaValue3Label) {
+            mediaValue3Label->setStyleSheet("QLabel { color: #2D3748; }");
+            mediaValue3Label->setFont(fontLabel);
+        }
+        if (mediaValue4Label) {
+            mediaValue4Label->setStyleSheet("QLabel { color: #2D3748; }");
+            mediaValue4Label->setFont(fontLabel);
+        }
 
         // Create layouts to organize widgets.
         layout = new QGridLayout(this);
