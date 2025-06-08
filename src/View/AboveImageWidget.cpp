@@ -141,6 +141,9 @@ namespace View
         modifyWindow = nullptr;
         layout = nullptr;
 
+        // Save the current media ID
+        id = media->getId();
+
         // Create visual buttons.
         modifyButton = new QPushButton(QIcon(":/Assets/Icons/edit.png"), tr("Edit"), this);
         deleteButton = new QPushButton(QIcon(":/Assets/Icons/delete.png"), tr("Delete"), this);
@@ -200,27 +203,7 @@ namespace View
 
     unsigned int AboveImageWidget::getId() const
     {
-        if (mediaIDLabel != nullptr)
-        {
-            bool ok = true;
-            QString idText = mediaIDLabel->text();
-            QString idSubstring = idText.mid(4);
-            unsigned int id = idSubstring.toUInt(&ok);
-            if (ok)
-            {
-                return id;
-            }
-            else
-            {
-                qWarning() << "Invalid media ID!";
-                throw std::exception();
-            }
-        }
-        else
-        {
-            qWarning() << "No media selected in AboveImageWidget!";
-            throw std::exception();
-        }
+        return id;
     }
 
     void AboveImageWidget::modifySlot()
@@ -234,13 +217,39 @@ namespace View
         {
             Media::Article *article = static_cast<Media::Article *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(article->getId(), "Article", article->getTitle(), article->getDescription(), article->getAuthor(),
-                                                       article->getPageCount(), 0, "", 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["journalName"] = article->getJournalName();
+            mediaFields["volumeNumber"] = article->getVolumeNumber();
+            mediaFields["pageCount"] = article->getPageCount();
+            mediaFields["doi"] = article->getDoi();
 
-            connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveImageWidget::applyChangesSlot);
-            connect(this, &AboveImageWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveImageWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveImageWidget::nameModifiedSlot);
+            modifyWindow = new ModifyMediaDialogueWindow(article->getId(), "Article", article->getTitle(), 
+                                                       article->getDescription(), article->getAuthor(),
+                                                       mediaFields, article->getCoverImage());
+
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this, 
+                   [this, article](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
+                         const std::string &coverImage) {
+                       // Update media object
+                       article->setTitle(name);
+                       article->setDescription(description);
+                       article->setAuthor(brand);
+                       article->setPageCount(std::get<unsigned int>(fields.at("pageCount")));
+                       article->setJournalName(std::get<std::string>(fields.at("journalName")));
+                       article->setVolumeNumber(std::get<std::string>(fields.at("volumeNumber")));
+                       article->setDoi(std::get<std::string>(fields.at("doi")));
+                       if (!coverImage.empty()) {
+                           article->setCoverImage(coverImage);
+                       }
+
+                       // Update UI
+                       createAboveImageForMedia(article);
+                       
+                       // Notify of changes
+                       emit setIsSaved(false);
+                       emit mediaModified(article->getId());
+                   });
 
             modifyWindow->exec();
         }
@@ -248,13 +257,39 @@ namespace View
         {
             Media::Audio *audio = static_cast<Media::Audio *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(audio->getId(), "Audio", audio->getTitle(), audio->getDescription(), audio->getAuthor(),
-                                                       audio->getDuration(), 0, audio->getFormat(), 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["duration"] = audio->getDuration();
+            mediaFields["format"] = audio->getFormat();
+            mediaFields["artist"] = audio->getArtist();
+            mediaFields["album"] = audio->getAlbum();
 
-            connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveImageWidget::applyChangesSlot);
-            connect(this, &AboveImageWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveImageWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveImageWidget::nameModifiedSlot);
+            modifyWindow = new ModifyMediaDialogueWindow(audio->getId(), "Audio", audio->getTitle(), 
+                                                       audio->getDescription(), audio->getAuthor(),
+                                                       mediaFields, audio->getCoverImage());
+
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this,
+                   [this, audio](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
+                         const std::string &coverImage) {
+                       // Update media object
+                       audio->setTitle(name);
+                       audio->setDescription(description);
+                       audio->setAuthor(brand);
+                       audio->setDuration(std::get<unsigned int>(fields.at("duration")));
+                       audio->setFormat(std::get<std::string>(fields.at("format")));
+                       audio->setArtist(std::get<std::string>(fields.at("artist")));
+                       audio->setAlbum(std::get<std::string>(fields.at("album")));
+                       if (!coverImage.empty()) {
+                           audio->setCoverImage(coverImage);
+                       }
+
+                       // Update UI
+                       createAboveImageForMedia(audio);
+
+                       // Notify of changes
+                       emit setIsSaved(false);
+                       emit mediaModified(audio->getId());
+                   });
 
             modifyWindow->exec();
         }
@@ -262,13 +297,39 @@ namespace View
         {
             Media::Book *book = static_cast<Media::Book *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(book->getId(), "Book", book->getTitle(), book->getDescription(), book->getAuthor(),
-                                                       book->getPageCount(), 0, "", 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["isbn"] = book->getIsbn();
+            mediaFields["pageCount"] = book->getPageCount();
+            mediaFields["publisher"] = book->getPublisher();
+            mediaFields["genre"] = book->getGenre();
 
-            connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveImageWidget::applyChangesSlot);
-            connect(this, &AboveImageWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveImageWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveImageWidget::nameModifiedSlot);
+            modifyWindow = new ModifyMediaDialogueWindow(book->getId(), "Book", book->getTitle(), 
+                                                       book->getDescription(), book->getAuthor(),
+                                                       mediaFields, book->getCoverImage());
+
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this,
+                   [this, book](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
+                         const std::string &coverImage) {
+                       // Update media object
+                       book->setTitle(name);
+                       book->setDescription(description);
+                       book->setAuthor(brand);
+                       book->setPageCount(std::get<unsigned int>(fields.at("pageCount")));
+                       book->setPublisher(std::get<std::string>(fields.at("publisher")));
+                       book->setGenre(std::get<std::string>(fields.at("genre")));
+                       book->setIsbn(std::get<std::string>(fields.at("isbn")));
+                       if (!coverImage.empty()) {
+                           book->setCoverImage(coverImage);
+                       }
+
+                       // Update UI
+                       createAboveImageForMedia(book);
+
+                       // Notify of changes
+                       emit setIsSaved(false);
+                       emit mediaModified(book->getId());
+                   });
 
             modifyWindow->exec();
         }
@@ -276,100 +337,44 @@ namespace View
         {
             Media::Film *film = static_cast<Media::Film *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(film->getId(), "Film", film->getTitle(), film->getDescription(), film->getAuthor(),
-                                                       film->getDuration(), 0, film->getGenre(), 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["duration"] = film->getDuration();
+            mediaFields["budget"] = film->getBudget();
+            mediaFields["genre"] = film->getGenre();
+            mediaFields["rating"] = 0.0;  // Not used in current implementation
 
-            connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveImageWidget::applyChangesSlot);
-            connect(this, &AboveImageWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveImageWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveImageWidget::nameModifiedSlot);
+            modifyWindow = new ModifyMediaDialogueWindow(film->getId(), "Film", film->getTitle(), 
+                                                       film->getDescription(), film->getDirector(),
+                                                       mediaFields, film->getCoverImage());
+
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this,
+                   [this, film](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
+                         const std::string &coverImage) {
+                       // Update media object
+                       film->setTitle(name);
+                       film->setDescription(description);
+                       film->setDirector(brand);  // Note: brand is director for films
+                       film->setDuration(std::get<unsigned int>(fields.at("duration")));
+                       film->setBudget(std::get<double>(fields.at("budget")));
+                       film->setGenre(std::get<std::string>(fields.at("genre")));
+                       if (!coverImage.empty()) {
+                           film->setCoverImage(coverImage);
+                       }
+
+                       // Update UI
+                       createAboveImageForMedia(film);
+
+                       // Notify of changes
+                       emit setIsSaved(false);
+                       emit mediaModified(film->getId());
+                   });
 
             modifyWindow->exec();
         }
     }
 
-    void AboveImageWidget::applyChangesSlot()
-    {
-        emit applyChangesSignal();
-    }
-
-    void AboveImageWidget::youCanCheckIfNameIsUnique(const std::vector<Media::AbstractMedia *> &medias)
-    {
-        emit finallyYouCanApplyChanges(medias);
-    }
-
-    void AboveImageWidget::saveModifySlot(const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, const double &value4)
-    {
-        emit saveModifySignal(name, description, brand, value1, value2, value3, value4);
-    }
-
-    void AboveImageWidget::saveModify(Media::AbstractMedia *media, const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, [[maybe_unused]] const double &value4)
-    {
-        if (dynamic_cast<Media::Article *>(media))
-        {
-            Media::Article *article = static_cast<Media::Article *>(media);
-
-            article->setTitle(name);
-            article->setDescription(description);
-            article->setAuthor(brand);
-            article->setPageCount(value1);
-        }
-        else if (dynamic_cast<Media::Audio *>(media))
-        {
-            Media::Audio *audio = static_cast<Media::Audio *>(media);
-
-            audio->setTitle(name);
-            audio->setDescription(description);
-            audio->setAuthor(brand);
-            audio->setDuration(value1);
-            audio->setFormat(value3);
-        }
-        else if (dynamic_cast<Media::Book *>(media))
-        {
-            Media::Book *book = static_cast<Media::Book *>(media);
-
-            book->setTitle(name);
-            book->setDescription(description);
-            book->setAuthor(brand);
-            book->setPageCount(value1);
-        }
-        else if (dynamic_cast<Media::Film *>(media))
-        {
-            Media::Film *film = static_cast<Media::Film *>(media);
-
-            film->setTitle(name);
-            film->setDescription(description);
-            film->setAuthor(brand);
-            film->setDuration(value1);
-            film->setGenre(value3);
-        }
-
-        // Update widget
-        setMediaTitleLabel(name);
-        setDescriptionLabel(description);
-        setMediaAuthorLabel(brand);
-        if (dynamic_cast<Media::Article *>(media))
-        {
-            setMediaValue1Label("Article", value1);
-        }
-        if (dynamic_cast<Media::Audio *>(media))
-        {
-            setMediaValue1Label("Audio", value1);
-            setMediaValue3Label("Audio", value3);
-        }
-        if (dynamic_cast<Media::Book *>(media))
-        {
-            setMediaValue1Label("Book", value1);
-        }
-        if (dynamic_cast<Media::Film *>(media))
-        {
-            setMediaValue1Label("Film", value1);
-            setMediaValue3Label("Film", value3);
-        }
-
-        // Notify main window of changes
-        emit setIsSaved(false);
-    }
+    // No implementations needed for removed slots and methods
 
     void AboveImageWidget::nameModifiedSlot(const std::string &previousName, const std::string &newName)
     {
@@ -378,9 +383,11 @@ namespace View
 
     void AboveImageWidget::deleteSlot()
     {
-        QMessageBox::StandardButton reply = QMessageBox::question(this, "Delete Media", "Are you sure you want to delete this media permanently?", QMessageBox::Yes | QMessageBox::No);
-        if (reply == QMessageBox::Yes)
-        {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+            this, "Delete media", "Are you sure you want to delete this media?",
+            QMessageBox::Yes | QMessageBox::No);
+
+        if (reply == QMessageBox::Yes) {
             emit mediaDeleted();
         }
     }

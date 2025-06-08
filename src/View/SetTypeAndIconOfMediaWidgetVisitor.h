@@ -11,9 +11,10 @@ namespace View
     {
     private:
         MediaPanel *mediaPanel;
+        MediaWidget *targetWidget;
 
     public:
-        SetTypeAndIconOfMediaWidgetVisitor(MediaPanel *mediaPanel);
+        SetTypeAndIconOfMediaWidgetVisitor(MediaPanel *mediaPanel, MediaWidget* widget);
 
         void visit(const Media::Article &article) override;
         void visit(const Media::Audio &audio) override;

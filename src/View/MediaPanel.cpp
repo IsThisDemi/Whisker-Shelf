@@ -5,10 +5,19 @@
 namespace View
 {
 
-    MediaPanel::MediaPanel(const std::vector<Media::AbstractMedia *> &medias, QWidget *parent)
-        : QWidget(parent), mainLayout(nullptr), searchLayout(nullptr), searchBar(nullptr),
-          returnBackButton(nullptr), mediaLayout(nullptr), scrollArea(nullptr), mediaWidgetContainer(nullptr),
-          addMediaButton(nullptr), addWindow(nullptr), mediaWidget(nullptr)
+    MediaPanel::MediaPanel(const std::vector<Media::AbstractMedia*>& medias, QWidget *parent)
+        : QWidget(parent), 
+          mainLayout(nullptr),
+          searchLayout(nullptr),
+          searchBar(nullptr),
+          returnBackButton(nullptr),
+          mediaLayout(nullptr),
+          scrollArea(nullptr),
+          mediaWidgetContainer(nullptr),
+          addMediaButton(nullptr),
+          addWindow(nullptr),
+          mediaWidget(nullptr),
+          medias(const_cast<std::vector<Media::AbstractMedia*>&>(medias))
     {
         createPanel(medias);
     }
@@ -76,27 +85,7 @@ namespace View
             for (Media::AbstractMedia *media : medias)
             {
                 mediaWidget = new MediaWidget(this);
-                mediaWidget->setName(QString::fromStdString(media->getTitle()));
-                mediaWidget->setId(media->getId());
-                if (typeid(*media) == typeid(Media::Article))
-                {
-                    mediaWidget->setData(static_cast<Media::Article *>(media)->getPageCount(), " pg");
-                }
-                else if (typeid(*media) == typeid(Media::Audio))
-                {
-                    mediaWidget->setData(static_cast<Media::Audio *>(media)->getDuration(), " sec");
-                }
-                else if (typeid(*media) == typeid(Media::Book))
-                {
-                    mediaWidget->setData(static_cast<Media::Book *>(media)->getPageCount(), " pg");
-                }
-                else if (typeid(*media) == typeid(Media::Film))
-                {
-                    mediaWidget->setData(static_cast<Media::Film *>(media)->getDuration(), " min");
-                }
-
-                SetTypeAndIconOfMediaWidgetVisitor setTypeAndIconOfMediaWidgetVisitor(this);
-                media->accept(setTypeAndIconOfMediaWidgetVisitor);
+                updateMediaWidget(mediaWidget, media);
 
                 mediaLayout->addWidget(mediaWidget, row, column); // Add widget to grid layout
                 mediaWidgets.push_back(mediaWidget);              // Add widget to list
@@ -226,27 +215,7 @@ namespace View
                 // Create a widget to display the media
                 mediaWidget = new MediaWidget(this);
 
-                mediaWidget->setName(QString::fromStdString(media->getTitle()));
-                mediaWidget->setId(media->getId());
-                if (typeid(*media) == typeid(Media::Article))
-                {
-                    mediaWidget->setData(static_cast<Media::Article *>(media)->getPageCount(), " pg");
-                }
-                else if (typeid(*media) == typeid(Media::Audio))
-                {
-                    mediaWidget->setData(static_cast<Media::Audio *>(media)->getDuration(), " sec");
-                }
-                else if (typeid(*media) == typeid(Media::Book))
-                {
-                    mediaWidget->setData(static_cast<Media::Book *>(media)->getPageCount(), " pg");
-                }
-                else if (typeid(*media) == typeid(Media::Film))
-                {
-                    mediaWidget->setData(static_cast<Media::Film *>(media)->getDuration(), " min");
-                }
-
-                SetTypeAndIconOfMediaWidgetVisitor setTypeAndIconOfMediaWidgetVisitor(this);
-                media->accept(setTypeAndIconOfMediaWidgetVisitor);
+                updateMediaWidget(mediaWidget, media);
 
                 mediaLayout->addWidget(mediaWidget, row, column); // Add widget to grid layout
                 mediaWidgets.push_back(mediaWidget);              // Add to MediaWidgets vector
@@ -276,6 +245,45 @@ namespace View
         }
 
         emit searchResults(mediaWidgets);
+    }
+
+    void MediaPanel::updateMediaWidget(MediaWidget* widget, Media::AbstractMedia* media) {
+        if (typeid(*media) == typeid(Media::Article)) {
+            Media::Article* article = static_cast<Media::Article*>(media);
+            QString title = QString::fromStdString(article->getTitle());
+            QString journalInfo = QString::fromStdString(article->getJournalName() + " (" + article->getVolumeNumber() + ")");
+            widget->setName(title + "\n" + journalInfo);
+            widget->setId(article->getId());
+            widget->setData(article->getPageCount(), " pg");
+        }
+        else if (typeid(*media) == typeid(Media::Audio)) {
+            Media::Audio* audio = static_cast<Media::Audio*>(media);
+            QString artistTitle = QString::fromStdString(audio->getArtist() + " - " + audio->getTitle());
+            QString album = QString::fromStdString(audio->getAlbum());
+            widget->setName(artistTitle + "\n" + album);
+            widget->setId(audio->getId());
+            widget->setData(audio->getDuration() / 60.0, " min"); // Convert seconds to minutes
+        }
+        else if (typeid(*media) == typeid(Media::Book)) {
+            Media::Book* book = static_cast<Media::Book*>(media);
+            QString title = QString::fromStdString(book->getTitle());
+            QString authorPublisher = QString::fromStdString(book->getAuthor() + " (" + book->getPublisher() + ")");
+            widget->setName(title + "\n" + authorPublisher);
+            widget->setId(book->getId());
+            widget->setData(book->getPageCount(), " pg");
+        }
+        else if (typeid(*media) == typeid(Media::Film)) {
+            Media::Film* film = static_cast<Media::Film*>(media);
+            QString title = QString::fromStdString(film->getTitle());
+            QString directorGenre = QString::fromStdString(film->getDirector() + " - " + film->getGenre());
+            widget->setName(title + "\n" + directorGenre);
+            widget->setId(film->getId());
+            widget->setData(film->getDuration(), " min");
+        }
+
+        // Create visitor that will update the icon of this specific widget
+        SetTypeAndIconOfMediaWidgetVisitor setTypeAndIconOfMediaWidgetVisitor(this, widget);
+        media->accept(setTypeAndIconOfMediaWidgetVisitor);
     }
 
     // Finds the length of the longest common substring between two given strings
@@ -323,9 +331,11 @@ namespace View
     }
 
     // Set the icon of the media widget
-    void MediaPanel::setIconOfMediaWidget(const QIcon &icon)
+    void MediaPanel::setIconOfMediaWidget(const QIcon &icon, MediaWidget* widget)
     {
-        mediaWidget->setIcon(icon);
+        if (widget) {
+            widget->setIcon(icon);
+        }
     }
 
     // Handle mouse press event
@@ -478,6 +488,32 @@ namespace View
         catch (const std::exception &e)
         { // If the ID can't be read, no color is changed
             return;
+        }
+    }
+
+    void MediaPanel::mediaModifiedHandler(unsigned int id) 
+    {
+        // Find the corresponding media object
+        Media::AbstractMedia* modifiedMedia = nullptr;
+        for (Media::AbstractMedia* media : medias)
+        {
+            if (media->getId() == id)
+            {
+                modifiedMedia = media;
+                break;
+            }
+        }
+
+        if (!modifiedMedia) return;
+
+        // Find and update the corresponding widget
+        for (MediaWidget* widget : mediaWidgets)
+        {
+            if (widget->getId() == id)
+            {
+                updateMediaWidget(widget, modifiedMedia);
+                break;
+            }
         }
     }
 

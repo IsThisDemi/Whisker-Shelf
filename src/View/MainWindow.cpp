@@ -87,6 +87,9 @@ namespace View
         connect(aboveImageWidget, &AboveImageWidget::setIsSaved, this, &MainWindow::setIsSaved);
         connect(aboveImageWidget, &AboveImageWidget::nameHasBeenModified, this, &MainWindow::nameModifiedHandler);
         connect(aboveImageWidget, &AboveImageWidget::mediaDeleted, this, &MainWindow::mediaDeletedHandler);
+        connect(aboveImageWidget, &AboveImageWidget::modifySignal, this, &MainWindow::modifyHandler);
+        connect(aboveImageWidget, &AboveImageWidget::mediaModified, this, &MainWindow::mediaModifiedHandler);
+        connect(aboveImageWidget, &AboveImageWidget::mediaModified, mediaPanel, &MediaPanel::mediaModifiedHandler);
     }
 
     // Check if there are any unsaved changes and ask the user if they want to save them
@@ -367,18 +370,6 @@ namespace View
         aboveImageWidget->modify(getCurrentlySelectedMedia());
     }
 
-    // Emits a signal to check if the name is unique
-    void MainWindow::applyChangesHandler()
-    {
-        emit youCanCheckIfNameIsUnique(medias);
-    }
-
-    // Saves the modified values of the currently selected media
-    void MainWindow::saveModifyHandler(const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, const double &value4)
-    {
-        aboveImageWidget->saveModify(getCurrentlySelectedMedia(), name, description, brand, value1, value2, value3, value4);
-    }
-
     // Modifies the name of the currently selected media in the MediaPanel
     void MainWindow::nameModifiedHandler(const std::string &previousName, const std::string &newName)
     {
@@ -435,7 +426,34 @@ namespace View
         setIsSaved(false);
     }
 
-
+    // Update the cover image after media modification
+    void MainWindow::mediaModifiedHandler(unsigned int id) 
+    {
+        for (Media::AbstractMedia *media : medias)
+        {
+            if (media->getId() == id)
+            {
+                // Try to use the media's cover image first
+                QString coverImage = QString::fromStdString(media->getCoverImage());
+                if (!coverImage.isEmpty() && QFile::exists(coverImage)) {
+                    imageCoverWidget->setImage(coverImage);
+                } else {
+                    // If no cover image, use the default icon
+                    QString imagePath;
+                    if (dynamic_cast<Media::Article *>(media))
+                        imagePath = ":/Assets/Icons/article.png";
+                    else if (dynamic_cast<Media::Audio *>(media))
+                        imagePath = ":/Assets/Icons/audio.png";
+                    else if (dynamic_cast<Media::Book *>(media))
+                        imagePath = ":/Assets/Icons/book.png";
+                    else if (dynamic_cast<Media::Film *>(media))
+                        imagePath = ":/Assets/Icons/film.png";
+                    imageCoverWidget->setImage(imagePath);
+                }
+                break;
+            }
+        }
+    }
 
     // Destructor that cleans up dynamically allocated objects
     MainWindow::~MainWindow()

@@ -272,13 +272,25 @@ namespace View
         {
             Media::Article *article = static_cast<Media::Article *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(article->getId(), "Article", article->getTitle(), article->getDescription(), article->getAuthor(),
-                                                          article->getPageCount(), 0, "", 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["journalName"] = "";
+            mediaFields["volumeNumber"] = "";
+            mediaFields["pageCount"] = article->getPageCount();
+            mediaFields["doi"] = "";
+
+            modifyWindow = new ModifyMediaDialogueWindow(article->getId(), "Article", article->getTitle(), 
+                                                       article->getDescription(), article->getAuthor(),
+                                                       mediaFields, article->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveChartWidget::applyChangesSlot);
             connect(this, &AboveChartWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveChartWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveChartWidget::nameModifiedSlot);
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this, 
+                   [this](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &mediaFields,
+                         const std::string &coverImage) {
+                       unsigned int pageCount = std::get<unsigned int>(mediaFields.at("pageCount"));
+                       emit saveModifySignal(name, description, brand, pageCount, 0, "", 0);
+                   });
 
             modifyWindow->exec();
         }
@@ -287,13 +299,26 @@ namespace View
         {
             Media::Audio *audio = static_cast<Media::Audio *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(audio->getId(), "Audio", audio->getTitle(), audio->getDescription(), audio->getAuthor(),
-                                                          audio->getDuration(), 0, audio->getFormat(), 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["duration"] = audio->getDuration();
+            mediaFields["format"] = audio->getFormat();
+            mediaFields["artist"] = "";
+            mediaFields["album"] = "";
+
+            modifyWindow = new ModifyMediaDialogueWindow(audio->getId(), "Audio", audio->getTitle(), 
+                                                       audio->getDescription(), audio->getAuthor(),
+                                                       mediaFields, audio->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveChartWidget::applyChangesSlot);
             connect(this, &AboveChartWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveChartWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveChartWidget::nameModifiedSlot);
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this, 
+                   [this](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &mediaFields,
+                         const std::string &coverImage) {
+                       unsigned int duration = std::get<unsigned int>(mediaFields.at("duration"));
+                       std::string format = std::get<std::string>(mediaFields.at("format"));
+                       emit saveModifySignal(name, description, brand, duration, 0, format, 0);
+                   });
 
             modifyWindow->exec();
         }
@@ -302,13 +327,25 @@ namespace View
         {
             Media::Book *book = static_cast<Media::Book *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(book->getId(), "Book", book->getTitle(), book->getDescription(), book->getAuthor(),
-                                                          book->getPageCount(), 0, "", 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["isbn"] = "";
+            mediaFields["pageCount"] = book->getPageCount();
+            mediaFields["publisher"] = "";
+            mediaFields["genre"] = "";
+
+            modifyWindow = new ModifyMediaDialogueWindow(book->getId(), "Book", book->getTitle(), 
+                                                       book->getDescription(), book->getAuthor(),
+                                                       mediaFields, book->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveChartWidget::applyChangesSlot);
             connect(this, &AboveChartWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveChartWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveChartWidget::nameModifiedSlot);
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this, 
+                   [this](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &mediaFields,
+                         const std::string &coverImage) {
+                       unsigned int pageCount = std::get<unsigned int>(mediaFields.at("pageCount"));
+                       emit saveModifySignal(name, description, brand, pageCount, 0, "", 0);
+                   });
 
             modifyWindow->exec();
         }
@@ -317,13 +354,26 @@ namespace View
         {
             Media::Film *film = static_cast<Media::Film *>(media);
 
-            modifyWindow = new ModifyMediaDialogueWindow(film->getId(), "Film", film->getTitle(), film->getDescription(), film->getAuthor(),
-                                                          film->getDuration(), 0, film->getGenre(), 0);
+            std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+            mediaFields["duration"] = film->getDuration();
+            mediaFields["budget"] = 0.0;
+            mediaFields["genre"] = film->getGenre();
+            mediaFields["rating"] = 0.0;
+
+            modifyWindow = new ModifyMediaDialogueWindow(film->getId(), "Film", film->getTitle(), 
+                                                       film->getDescription(), film->getAuthor(),
+                                                       mediaFields, film->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::applySignal, this, &AboveChartWidget::applyChangesSlot);
             connect(this, &AboveChartWidget::finallyYouCanApplyChanges, modifyWindow, &ModifyMediaDialogueWindow::applyChanges);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaModified, this, &AboveChartWidget::saveModifySlot);
-            connect(modifyWindow, &ModifyMediaDialogueWindow::mediaNameModified, this, &AboveChartWidget::nameModifiedSlot);
+            connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this, 
+                   [this](const std::string &name, const std::string &description, const std::string &brand,
+                         const std::map<std::string, std::variant<std::string, unsigned int, double>> &mediaFields,
+                         const std::string &coverImage) {
+                       unsigned int duration = std::get<unsigned int>(mediaFields.at("duration"));
+                       std::string genre = std::get<std::string>(mediaFields.at("genre"));
+                       emit saveModifySignal(name, description, brand, duration, 0, genre, 0);
+                   });
 
             modifyWindow->exec();
         }

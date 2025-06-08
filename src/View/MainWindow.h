@@ -61,11 +61,9 @@ namespace View
         void mediaAddedHandler(Media::AbstractMedia *media);
         void createAndAddMediaHandler();
         void modifyHandler();
-        void applyChangesHandler();
-        void saveModifyHandler(const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2,
-                               const std::string &value3, const double &value4);
         void nameModifiedHandler(const std::string &previousName, const std::string &newName);
         void mediaDeletedHandler();
+        void mediaModifiedHandler(unsigned int id);
 
     public:
         MainWindow(QWidget *parent = nullptr);

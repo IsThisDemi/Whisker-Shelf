@@ -1,156 +1,329 @@
 #include "ModifyMediaDialogueWindow.h"
+#include <QFileDialog>
+#include <QImageReader>
 
 namespace View
 {
 
     // This is the constructor of the ModifyMediaDialogueWindow class
-    ModifyMediaDialogueWindow::ModifyMediaDialogueWindow(const unsigned int &Id, const std::string &Type, const std::string &OriginalMediaName, const std::string &OriginalMediaDescription,
-                                                           const std::string &OriginalMediaBrand, const double &OriginalValue1, const double &OriginalValue2,
-                                                           const std::string &OriginalValue3, const double &OriginalValue4, AbstractDialogueWindow *parent)
-        : AbstractDialogueWindow(parent), id(Id), type(Type), originalMediaName(OriginalMediaName), originalMediaDescription(OriginalMediaDescription),
-          originalMediaBrand(OriginalMediaBrand), originalValue1(OriginalValue1), originalValue2(OriginalValue2), originalValue3(OriginalValue3), originalValue4(OriginalValue4)
+    ModifyMediaDialogueWindow::ModifyMediaDialogueWindow(const unsigned int &Id, const std::string &Type, const std::string &MediaName,
+                                                           const std::string &MediaDescription, const std::string &MediaBrand,
+                                                           const std::map<std::string, std::variant<std::string, unsigned int, double>> &MediaFields,
+                                                           const std::string &CoverImage, AbstractDialogueWindow *parent)
+        : AbstractDialogueWindow(parent), id(Id), type(Type), originalMediaName(MediaName),
+          originalMediaDescription(MediaDescription), originalMediaBrand(MediaBrand),
+          originalCoverImage(CoverImage)
     {
+        // Initialize media type specific fields
+        if (type == "Article") {
+            originalJournalName = std::get<std::string>(MediaFields.at("journalName"));
+            originalVolume = std::get<std::string>(MediaFields.at("volumeNumber"));
+            originalPageCount = std::get<unsigned int>(MediaFields.at("pageCount"));
+            originalDoi = std::get<std::string>(MediaFields.at("doi"));
+        }
+        else if (type == "Audio") {
+            originalDuration = std::get<unsigned int>(MediaFields.at("duration"));
+            originalFormat = std::get<std::string>(MediaFields.at("format"));
+            originalArtist = std::get<std::string>(MediaFields.at("artist"));
+            originalAlbum = std::get<std::string>(MediaFields.at("album"));
+        }
+        else if (type == "Book") {
+            originalIsbn = std::get<std::string>(MediaFields.at("isbn"));
+            originalBookPageCount = std::get<unsigned int>(MediaFields.at("pageCount"));
+            originalPublisher = std::get<std::string>(MediaFields.at("publisher"));
+            originalBookGenre = std::get<std::string>(MediaFields.at("genre"));
+        }
+        else if (type == "Film") {
+            originalDirector = std::get<std::string>(MediaFields.at("director"));
+            originalFilmDuration = std::get<unsigned int>(MediaFields.at("duration"));
+            originalFilmGenre = std::get<std::string>(MediaFields.at("genre"));
+            originalBudget = std::get<double>(MediaFields.at("budget"));
+            originalRating = std::get<double>(MediaFields.at("rating"));
+        }
+
+        setupUI();
+    }
+
+    void ModifyMediaDialogueWindow::setupUI() {
         // Set the title of the window
-        setWindowTitle("Modify media");
+        setWindowTitle("Modify " + QString::fromStdString(type));
 
         // Create a vertical layout for the main window
         mainLayout = new QVBoxLayout(this);
 
-        // Create a horizontal layout for the name field
+        // Common fields section
+        setupCommonFields();
+
+        // Media type specific fields section
+        setupMediaTypeSpecificFields();
+
+        // Cover image section
+        setupCoverImageSection();
+
+        // Buttons section
+        setupButtons();
+
+        setLayout(mainLayout);
+
+        // Connect signals
+        connectSignals();
+    }
+
+    void ModifyMediaDialogueWindow::setupCommonFields() {
+        // Name field
         nameLayout = new QHBoxLayout;
         nameLabel = new QLabel("Name:", this);
         nameLineEdit = new QLineEdit(QString::fromStdString(originalMediaName), this);
         nameLineEdit->setFixedSize(193, 26);
         nameLayout->addWidget(nameLabel);
         nameLayout->addWidget(nameLineEdit);
+        mainLayout->addLayout(nameLayout);
 
-        // Create a horizontal layout for the description field
+        // Description field
         descriptionLayout = new QHBoxLayout;
         descriptionLabel = new QLabel("Description:", this);
         descriptionLineEdit = new QLineEdit(QString::fromStdString(originalMediaDescription), this);
         descriptionLineEdit->setFixedSize(193, 26);
         descriptionLayout->addWidget(descriptionLabel);
         descriptionLayout->addWidget(descriptionLineEdit);
+        mainLayout->addLayout(descriptionLayout);
 
-        // Create a horizontal layout for the brand field
+        // Brand/Author field
         brandLayout = new QHBoxLayout;
-        brandLabel = new QLabel("Brand:", this);
+        brandLabel = new QLabel(type == "Film" ? "Director:" : "Author:", this);
         brandLineEdit = new QLineEdit(QString::fromStdString(originalMediaBrand), this);
         brandLineEdit->setFixedSize(193, 26);
         brandLayout->addWidget(brandLabel);
         brandLayout->addWidget(brandLineEdit);
+        mainLayout->addLayout(brandLayout);
+    }
 
-        // Create a horizontal layout for the value1 field
-        value1LineEdit = new QLineEdit(QString::number(originalValue1), this);
-        value1Layout = new QHBoxLayout;
-        if (type == "Article" || type == "Book") {
-            value1Label = new QLabel("Page Count:", this);
-        } else if (type == "Audio" || type == "Film") {
-            value1Label = new QLabel("Duration:", this);
+    void ModifyMediaDialogueWindow::setupMediaTypeSpecificFields() {
+        field1Edit = new QLineEdit(this);
+        field2Edit = new QLineEdit(this);
+        field3Edit = new QLineEdit(this);
+        field4Edit = new QLineEdit(this);
+        field1Edit->setFixedSize(193, 26);
+        field2Edit->setFixedSize(193, 26);
+        field3Edit->setFixedSize(193, 26);
+        field4Edit->setFixedSize(193, 26);
+
+        QHBoxLayout *field1Layout = new QHBoxLayout;
+        QHBoxLayout *field2Layout = new QHBoxLayout;
+        QHBoxLayout *field3Layout = new QHBoxLayout;
+        QHBoxLayout *field4Layout = new QHBoxLayout;
+
+        field1Label = new QLabel(this);
+        field2Label = new QLabel(this);
+        field3Label = new QLabel(this);
+        field4Label = new QLabel(this);
+
+        if (type == "Article") {
+            setupArticleFields();
         }
-        value1LineEdit->setFixedSize(193, 26);
-        value1Layout->addWidget(value1Label);
-        value1Layout->addWidget(value1LineEdit);
-
-        // Create a horizontal layout for the value2 field
-        value2LineEdit = new QLineEdit(QString::number(originalValue2), this);
-        value2Layout = new QHBoxLayout;
-        if (type == "Article" || type == "Book") {
-            value2Label = new QLabel("Page Count:", this);
-            value2LineEdit->setEnabled(false);
-            value2LineEdit->setObjectName("valueLineEditDisabled");
-        } else if (type == "Audio" || type == "Film") {
-            value2Label = new QLabel("Duration:", this);
-            value2LineEdit->setEnabled(false);
-            value2LineEdit->setObjectName("valueLineEditDisabled");
+        else if (type == "Audio") {
+            setupAudioFields();
         }
-        value2LineEdit->setFixedSize(193, 26);
-        value2Layout->addWidget(value2Label);
-        value2Layout->addWidget(value2LineEdit);
-
-        // Create a horizontal layout for the value3 field
-        value3LineEdit = new QLineEdit(QString::fromStdString(originalValue3), this);
-        value3LineEdit->hide();
-        value3Layout = new QHBoxLayout;
-        if (type == "Article" || type == "Book") {
-            value3Label = new QLabel("", this);
-        } else if (type == "Audio") {
-            value3Label = new QLabel("Format:", this);
-            value3Layout->addWidget(value3Label);
-            value3Layout->addWidget(value3LineEdit);
-            value3LineEdit->show();
-        } else if (type == "Film") {
-            value3Label = new QLabel("Genre:", this);
-            value3Layout->addWidget(value3Label);
-            value3Layout->addWidget(value3LineEdit);
-            value3LineEdit->show();
+        else if (type == "Book") {
+            setupBookFields();
         }
-        value3LineEdit->setFixedSize(193, 26);
-
-        // Create a horizontal layout for the value4 field
-        value4LineEdit = new QLineEdit(QString::number(originalValue4), this);
-        value4LineEdit->hide();
-        value4Layout = new QHBoxLayout;
-        if (type == "Film") {
-            value4Label = new QLabel("Rating:", this);
-            value4LineEdit->setEnabled(false);
-            value4LineEdit->setObjectName("valueLineEditDisabled");
-            value4LineEdit->show();
-            value4Layout->addWidget(value4Label);
-            value4Layout->addWidget(value4LineEdit);
+        else if (type == "Film") {
+            setupFilmFields();
         }
-        value4LineEdit->setFixedSize(193, 26);
 
-        // Create a horizontal layout for the buttons
-        buttonsLayout = new QHBoxLayout;
+        field1Layout->addWidget(field1Label);
+        field1Layout->addWidget(field1Edit);
+        field2Layout->addWidget(field2Label);
+        field2Layout->addWidget(field2Edit);
+        field3Layout->addWidget(field3Label);
+        field3Layout->addWidget(field3Edit);
+        field4Layout->addWidget(field4Label);
+        field4Layout->addWidget(field4Edit);
 
-        applyButton = new QPushButton("Done", this);
-        applyButton->setShortcut(Qt::Key_Enter);
-        connect(applyButton, &QPushButton::clicked, this, &ModifyMediaDialogueWindow::applySlot);
+        mainLayout->addLayout(field1Layout);
+        mainLayout->addLayout(field2Layout);
+        mainLayout->addLayout(field3Layout);
+        mainLayout->addLayout(field4Layout);
+    }
 
+    void ModifyMediaDialogueWindow::setupArticleFields() {
+        field1Label->setText("Journal Name:");
+        field2Label->setText("Volume Number:");
+        field3Label->setText("Page Count:");
+        field4Label->setText("DOI:");
+
+        field1Edit->setText(QString::fromStdString(originalJournalName));
+        field2Edit->setText(QString::fromStdString(originalVolume));
+        field3Edit->setText(QString::number(originalPageCount));
+        field4Edit->setText(QString::fromStdString(originalDoi));
+
+        // Set validator for page count
+        field3Edit->setValidator(new QIntValidator(0, 999999, this));
+    }
+
+    void ModifyMediaDialogueWindow::setupAudioFields() {
+        field1Label->setText("Duration (min):");
+        field2Label->setText("Format:");
+        field3Label->setText("Artist:");
+        field4Label->setText("Album:");
+
+        field1Edit->setText(QString::number(originalDuration));
+        field2Edit->setText(QString::fromStdString(originalFormat));
+        field3Edit->setText(QString::fromStdString(originalArtist));
+        field4Edit->setText(QString::fromStdString(originalAlbum));
+
+        // Set validator for duration
+        field1Edit->setValidator(new QIntValidator(0, 999999, this));
+    }
+
+    void ModifyMediaDialogueWindow::setupBookFields() {
+        field1Label->setText("ISBN:");
+        field2Label->setText("Page Count:");
+        field3Label->setText("Publisher:");
+        field4Label->setText("Genre:");
+
+        field1Edit->setText(QString::fromStdString(originalIsbn));
+        field2Edit->setText(QString::number(originalBookPageCount));
+        field3Edit->setText(QString::fromStdString(originalPublisher));
+        field4Edit->setText(QString::fromStdString(originalBookGenre));
+
+        // Set validator for page count
+        field2Edit->setValidator(new QIntValidator(0, 999999, this));
+    }
+
+    void ModifyMediaDialogueWindow::setupFilmFields() {
+        field1Label->setText("Duration (min):");
+        field2Label->setText("Budget:");
+        field3Label->setText("Genre:");
+        field4Label->setText("Rating:");
+
+        field1Edit->setText(QString::number(originalFilmDuration));
+        field2Edit->setText(QString::number(originalBudget));
+        field3Edit->setText(QString::fromStdString(originalFilmGenre));
+        field4Edit->setText(QString::number(originalRating));
+
+        // Set validators
+        field1Edit->setValidator(new QIntValidator(0, 999999, this));
+        field2Edit->setValidator(new QDoubleValidator(0, 999999999.99, 2, this));
+        field4Edit->setValidator(new QDoubleValidator(0, 10.0, 1, this));
+    }
+
+    void ModifyMediaDialogueWindow::setupCoverImageSection() {
+        coverImageLayout = new QHBoxLayout;
+        coverImageLabel = new QLabel("Cover Image:", this);
+        coverImagePreview = new QLabel(this);
+        
+        if (!originalCoverImage.empty()) {
+            QImage image(QString::fromStdString(originalCoverImage));
+            if (!image.isNull()) {
+                coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(100, 100, Qt::KeepAspectRatio));
+            }
+        }
+        
+        coverImagePreview->setFixedSize(100, 100);
+        coverImagePreview->setStyleSheet("border: 1px solid #ccc;");
+        
+        selectCoverButton = new QPushButton("Select Image", this);
+        
+        coverImageLayout->addWidget(coverImageLabel);
+        coverImageLayout->addWidget(coverImagePreview);
+        coverImageLayout->addWidget(selectCoverButton);
+        mainLayout->addLayout(coverImageLayout);
+    }
+
+    void ModifyMediaDialogueWindow::setupButtons() {
+        QHBoxLayout *buttonsLayout = new QHBoxLayout;
         discardButton = new QPushButton("Cancel", this);
-        discardButton->setShortcut(Qt::Key_Escape);
-        connect(discardButton, &QPushButton::clicked, this, &ModifyMediaDialogueWindow::discardChanges);
+        applyButton = new QPushButton("Apply", this);
+        applyButton->setEnabled(false);
 
         buttonsLayout->addWidget(discardButton);
         buttonsLayout->addWidget(applyButton);
-
-        // Add all the layouts to the main layout
-        mainLayout->addLayout(nameLayout);
-        mainLayout->addLayout(descriptionLayout);
-        mainLayout->addLayout(brandLayout);
-        mainLayout->addLayout(value1Layout);
-        mainLayout->addLayout(value2Layout);
-        mainLayout->addLayout(value3Layout);
-        mainLayout->addLayout(value4Layout);
         mainLayout->addLayout(buttonsLayout);
+    }
 
-        // Set the layout of the main window
-        setLayout(mainLayout);
+    void ModifyMediaDialogueWindow::connectSignals() {
+        connect(nameLineEdit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(descriptionLineEdit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(brandLineEdit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(field1Edit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(field2Edit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(field3Edit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(field4Edit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(selectCoverButton, &QPushButton::clicked, this, &ModifyMediaDialogueWindow::selectCoverImage);
+        connect(discardButton, &QPushButton::clicked, this, &ModifyMediaDialogueWindow::discardChanges);
+        connect(applyButton, &QPushButton::clicked, this, &ModifyMediaDialogueWindow::applySlot);
     }
 
     // Check if any fields have been modified
     bool ModifyMediaDialogueWindow::differentFromOriginal()
     {
-        // Get the text from the input fields
-        std::string name = nameLineEdit->text().toStdString();
-        std::string description = descriptionLineEdit->text().toStdString();
-        std::string brand = brandLineEdit->text().toStdString();
+        if (nameLineEdit->text().toStdString() != originalMediaName ||
+            descriptionLineEdit->text().toStdString() != originalMediaDescription ||
+            brandLineEdit->text().toStdString() != originalMediaBrand ||
+            (selectedCoverPath != QString::fromStdString(originalCoverImage) && !selectedCoverPath.isEmpty()))
+        {
+            return true;
+        }
 
-        // Get the numerical values from the input fields
-        double value1 = value1LineEdit->text().toDouble();
-        double value2 = value2LineEdit->text().toDouble();
-        std::string value3 = value3LineEdit->text().toStdString();
-        double value4 = value4LineEdit->text().toDouble();
+        // Check media type specific fields
+        if (type == "Article") {
+            if (field1Edit->text().toStdString() != originalJournalName ||
+                field2Edit->text().toStdString() != originalVolume ||
+                field3Edit->text().toUInt() != originalPageCount ||
+                field4Edit->text().toStdString() != originalDoi)
+            {
+                return true;
+            }
+        }
+        else if (type == "Audio") {
+            if (field1Edit->text().toUInt() != originalDuration ||
+                field2Edit->text().toStdString() != originalFormat ||
+                field3Edit->text().toStdString() != originalArtist ||
+                field4Edit->text().toStdString() != originalAlbum)
+            {
+                return true;
+            }
+        }
+        else if (type == "Book") {
+            if (field1Edit->text().toStdString() != originalIsbn ||
+                field2Edit->text().toUInt() != originalBookPageCount ||
+                field3Edit->text().toStdString() != originalPublisher ||
+                field4Edit->text().toStdString() != originalBookGenre)
+            {
+                return true;
+            }
+        }
+        else if (type == "Film") {
+            if (field1Edit->text().toUInt() != originalFilmDuration ||
+                field2Edit->text().toDouble() != originalBudget ||
+                field3Edit->text().toStdString() != originalFilmGenre ||
+                field4Edit->text().toDouble() != originalRating)
+            {
+                return true;
+            }
+        }
 
-        // Check if any fields have been modified
-        return (name != originalMediaName) ||
-               (description != originalMediaDescription) ||
-               (brand != originalMediaBrand) ||
-               (value1 != originalValue1) ||
-               (value2 != originalValue2) ||
-               (value3 != originalValue3) ||
-               (value4 != originalValue4);
+        return false;
+    }
+
+    void ModifyMediaDialogueWindow::selectCoverImage()
+    {
+        QString fileName = QFileDialog::getOpenFileName(this,
+            tr("Select Cover Image"), "",
+            tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+        
+        if (!fileName.isEmpty()) {
+            QImage image(fileName);
+            if (!image.isNull()) {
+                selectedCoverPath = fileName;
+                coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(
+                    coverImagePreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                afterTextChanged();
+            } else {
+                QMessageBox::critical(this, "Error", "Failed to load the selected image!");
+            }
+        }
     }
 
     // Enables the apply button if there are any changes to apply.
@@ -164,94 +337,121 @@ namespace View
         }
     }
 
-     // Emits the applySignal to apply the changes.
+    // Emits the saveModify signal to apply the changes and closes the dialog.
     void ModifyMediaDialogueWindow::applySlot()
     {
-        emit applySignal();
-    }
-
-    // Apply changes to the media
-    void ModifyMediaDialogueWindow::applyChanges(const std::vector<Media::AbstractMedia *> medias)
-    {
-        // Check if all text fields are filled
-        if (nameLineEdit->text().isEmpty() || descriptionLineEdit->text().isEmpty() || brandLineEdit->text().isEmpty() ||
-            value1LineEdit->text().isEmpty() || value2LineEdit->text().isEmpty() /*|| value3LineEdit->text().isEmpty() || value4LineEdit->text().isEmpty()*/)
+        // Check if all common text fields are filled
+        if (nameLineEdit->text().isEmpty() || descriptionLineEdit->text().isEmpty() || brandLineEdit->text().isEmpty())
         {
-            QMessageBox::critical(this, "Error", "Not all text fields are filled!");
+            QMessageBox::critical(this, "Error", "Name, description and author/director fields are required!");
             return;
         }
 
-        // Convert text fields to appropriate data types
+        // Check if media type specific fields are filled and valid
+        if (!validateMediaTypeSpecificFields())
+        {
+            return;
+        }
+
+        // Store all values before closing the dialog
         std::string name = nameLineEdit->text().toStdString();
         std::string description = descriptionLineEdit->text().toStdString();
         std::string brand = brandLineEdit->text().toStdString();
-        double value1 = value1LineEdit->text().toDouble();
-        double value2 = value2LineEdit->text().toDouble();
-        std::string value3 = value3LineEdit->text().toStdString();
-        double value4 = value4LineEdit->text().toDouble();
-
-        // Check if the values are numeric
-        if (!(value1LineEdit->hasAcceptableInput() && value2LineEdit->hasAcceptableInput() && value4LineEdit->hasAcceptableInput()))
-        {
-            QMessageBox::critical(this, "Error", "Values must be numeric!");
-            return;
+        std::string coverImage = selectedCoverPath.toStdString();
+        if (coverImage.empty()) {
+            coverImage = originalCoverImage;
         }
 
-        // Check if the name is modified
-        bool isNameModified = (name != originalMediaName);
+        // Create a map of media-specific fields
+        std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
+        
+        if (type == "Article") {
+            mediaFields["journalName"] = field1Edit->text().toStdString();
+            mediaFields["volumeNumber"] = field2Edit->text().toStdString();
+            mediaFields["pageCount"] = field3Edit->text().toUInt();
+            mediaFields["doi"] = field4Edit->text().toStdString();
+        }
+        else if (type == "Audio") {
+            mediaFields["duration"] = field1Edit->text().toUInt();
+            mediaFields["format"] = field2Edit->text().toStdString();
+            mediaFields["artist"] = field3Edit->text().toStdString();
+            mediaFields["album"] = field4Edit->text().toStdString();
+        }
+        else if (type == "Book") {
+            mediaFields["isbn"] = field1Edit->text().toStdString();
+            mediaFields["pageCount"] = field2Edit->text().toUInt();
+            mediaFields["publisher"] = field3Edit->text().toStdString();
+            mediaFields["genre"] = field4Edit->text().toStdString();
+        }
+        else if (type == "Film") {
+            mediaFields["duration"] = field1Edit->text().toUInt();
+            mediaFields["budget"] = field2Edit->text().toDouble();
+            mediaFields["genre"] = field3Edit->text().toStdString();
+            mediaFields["rating"] = field4Edit->text().toDouble();
+        }
 
-        // Check if the name is unique
-        if (isNameModified)
+        // First accept the dialog (this will close it)
+        QDialog::accept();
+        
+        // Then emit the signal with the stored values
+        emit saveModify(name, description, brand, mediaFields, coverImage); // Use accept() instead of close() to properly close the dialog
+    }
+
+    // Apply changes to the media - used for name validation
+    void ModifyMediaDialogueWindow::applyChanges([[maybe_unused]] const std::vector<Media::AbstractMedia *> medias)
+    {
+        // When we receive the validation result, emit applySignal
+        emit applySignal();
+    }
+
+    bool ModifyMediaDialogueWindow::validateMediaTypeSpecificFields()
+    {
+        if (field1Edit->text().isEmpty() || field2Edit->text().isEmpty() ||
+            field3Edit->text().isEmpty() || field4Edit->text().isEmpty())
         {
-            for (Media::AbstractMedia *media : medias)
-            {
-                if (media->getId() != id && media->getTitle() == name)
-                {
-                    QMessageBox::critical(this, "Error", "A media with that name already exists!");
-                    return;
+            QMessageBox::critical(this, "Error", "All fields are required!");
+            return false;
+        }
+
+        // Validate numeric fields based on media type
+        if (type == "Article") {
+            bool ok;
+            field3Edit->text().toUInt(&ok);
+            if (!ok) {
+                QMessageBox::critical(this, "Error", "Page count must be a valid number!");
+                return false;
+            }
+        }
+        else if (type == "Audio" || type == "Film") {
+            bool ok;
+            field1Edit->text().toUInt(&ok);
+            if (!ok) {
+                QMessageBox::critical(this, "Error", "Duration must be a valid number!");
+                return false;
+            }
+            if (type == "Film") {
+                field2Edit->text().toDouble(&ok);
+                if (!ok) {
+                    QMessageBox::critical(this, "Error", "Budget must be a valid number!");
+                    return false;
+                }
+                double rating = field4Edit->text().toDouble(&ok);
+                if (!ok || rating < 0 || rating > 10) {
+                    QMessageBox::critical(this, "Error", "Rating must be a number between 0 and 10!");
+                    return false;
                 }
             }
         }
-
-        // Validate values based on media type
-        if (type == "Article" || type == "Book")
-        {
-            // Validate page count
-            if (value1 < 1)
-            {
-                QMessageBox::critical(this, "Error", "Page count must be at least 1");
-                return;
-            }
-        }
-        else if (type == "Audio" || type == "Film")
-        {
-            // Validate duration
-            if (value1 < 0)
-            {
-                QMessageBox::critical(this, "Error", "Duration cannot be negative");
-                return;
-            }
-
-            if (type == "Film")
-            {
-                // Validate rating for films
-                if (value4 != originalValue4 && (value4 < 0.0 || value4 > 10.0))
-                {
-                    QMessageBox::critical(this, "Error", "Rating must be between 0.0 and 10.0");
-                    return;
-                }
+        else if (type == "Book") {
+            bool ok;
+            field2Edit->text().toUInt(&ok);
+            if (!ok) {
+                QMessageBox::critical(this, "Error", "Page count must be a valid number!");
+                return false;
             }
         }
 
-        // Emit signal with modified media details
-        emit mediaModified(name, description, brand, value1, value2, value3, value4);
-
-        // Emit signal if the name is modified
-        if (isNameModified)
-            emit mediaNameModified(originalMediaName, name);
-
-        // Close the dialog
-        accept();
+        return true;
     }
 
     // If there are modified fields, show a confirmation dialog
@@ -275,25 +475,32 @@ namespace View
     // Free up memory when the dialog is destroyed
     ModifyMediaDialogueWindow::~ModifyMediaDialogueWindow()
     {
+        // Delete labels
         delete nameLabel;
         delete descriptionLabel;
         delete brandLabel;
-        delete value1Label;
-        delete value2Label;
-        delete value3Label;
-        delete value4Label;
+        delete field1Label;
+        delete field2Label;
+        delete field3Label;
+        delete field4Label;
+        delete coverImageLabel;
+        delete coverImagePreview;
 
+        // Delete input fields
         delete nameLineEdit;
         delete descriptionLineEdit;
         delete brandLineEdit;
-        delete value1LineEdit;
-        delete value2LineEdit;
-        delete value3LineEdit;
-        delete value4LineEdit;
+        delete field1Edit;
+        delete field2Edit;
+        delete field3Edit;
+        delete field4Edit;
 
+        // Delete buttons
         delete discardButton;
         delete applyButton;
+        delete selectCoverButton;
 
+        // Delete layouts
         delete nameLayout;
         delete descriptionLayout;
         delete brandLayout;
@@ -301,8 +508,9 @@ namespace View
         delete value2Layout;
         delete value3Layout;
         delete value4Layout;
+        delete coverImageLayout;
 
-        delete buttonsLayout;
+        // Delete main layout
         delete mainLayout;
     }
 

@@ -37,26 +37,24 @@ namespace View
         QPushButton *deleteButton;
 
         ModifyMediaDialogueWindow *modifyWindow;
+        
+        std::vector<Media::AbstractMedia *> medias;
+        unsigned int id;
 
     signals:
         void setIsSaved(const bool &value);
         void modifySignal();
-        void applyChangesSignal();
-        void finallyYouCanApplyChanges(const std::vector<Media::AbstractMedia *> &medias);
-        void saveModifySignal(const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, const double &value4);
         void nameHasBeenModified(const std::string &previousName, const std::string &newName);
         void mediaDeleted();
+        void mediaModified(unsigned int id);
 
     public slots:
         void modifySlot();
-        void applyChangesSlot();
-        void youCanCheckIfNameIsUnique(const std::vector<Media::AbstractMedia *> &medias);
-        void saveModifySlot(const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, const double &value4);
-        void nameModifiedSlot(const std::string &previousName, const std::string &newName);
         void deleteSlot();
+        void nameModifiedSlot(const std::string &previousName, const std::string &newName);
 
     public:
-        AboveImageWidget(QWidget *parent = nullptr);
+        explicit AboveImageWidget(QWidget *parent = nullptr);
         void createGreyPanel();
         void createAboveImageForMedia(Media::AbstractMedia *media);
 
@@ -67,7 +65,8 @@ namespace View
 
         unsigned int getId() const;
         void modify(Media::AbstractMedia *media);
-        void saveModify(Media::AbstractMedia *media, const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2, const std::string &value3, const double &value4);
+        void saveModify(Media::AbstractMedia *media, const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2,
+                       const std::string &value3, const double &value4, const std::string &coverImage);
 
         void setMediaTitleLabel(const std::string &title);
         void setDescriptionLabel(const std::string &description);
