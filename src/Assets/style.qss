@@ -14,21 +14,22 @@ QMainWindow {
 
 /* MediaWidget styles */
 #backgroundWidget {
-  background-color: white;
-  border: 1px solid #E2E8F0;
+  background-color: rgb(240, 245, 255);  /* Very light blue, almost white */
+  border: 1px solid rgb(209, 225, 255);
   border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 #backgroundWidget:hover {
-  background-color: rgb(169, 195, 235);
-  border-color: rgb(149, 175, 215);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: rgb(230, 240, 255);  /* Light blue on hover */
+  border-color: rgb(169, 195, 235);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 #backgroundWidget[selected="true"] {
-  background-color: rgb(149, 175, 215);
-  border-color: rgb(129, 155, 195);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background-color: rgb(209, 225, 255);  /* Slightly darker blue when selected */
+  border-color: rgb(169, 195, 235);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Icon label style */
@@ -140,8 +141,8 @@ QPushButton#backButton {
 
 /* Sets the background color, border, border radius, and color of the scroll area */
 QScrollArea {
-  background-color: #F5F7FA;
-  border: 1px solid #E1E8ED;
+  background-color: rgb(169, 195, 235);  /* Slightly darker than main background */
+  border: none;
   border-radius: 8px;
 }
 
@@ -203,7 +204,8 @@ QWidget#backgroundWidget {
 
 /* Sets the background color of the media widget container */
 QWidget#mediaWidgetContainer {
-  background-color: #F5F7FA;
+  background-color: rgb(169, 195, 235);  /* Same as QScrollArea background */
+  border-radius 8px;
 }
 
 /* Hides the scrollbar buttons */
