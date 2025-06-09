@@ -1,6 +1,15 @@
+/* Global text color for the entire application */
+* {
+    color: #2D3748;  /* Dark gray as default text color */
+}
+
+QLabel {
+    color: #2D3748;  /* Ensures all labels have the dark gray color by default */
+}
+
 /* Main window style */
 QMainWindow {
-  background-color: #F5F7FA;
+  background-color:rgb(189, 215, 255);
 }
 
 /* MediaWidget styles */
@@ -11,14 +20,20 @@ QMainWindow {
 }
 
 #backgroundWidget:hover {
-  background-color: #F8FAFC;
-  border-color: #4A90E2;
+  background-color: rgb(169, 195, 235);
+  border-color: rgb(149, 175, 215);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#backgroundWidget[selected="true"] {
+  background-color: rgb(149, 175, 215);
+  border-color: rgb(129, 155, 195);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* Icon label style */
 QLabel#iconLabel {
-  background-color: #EDF2F7;
+  background-color: rgb(189, 215, 255);
   border-radius: 12px;
   padding: 8px;
 }
@@ -49,7 +64,8 @@ QLabel#descriptionLabel {
 
 /* Sets the background color and border radius of the dialog */
 QDialog {
-  background-color: #F5F7FA;
+  background-color: rgb(189, 215, 255);
+  border-radius: 8px;
 }
 
 /* Sets the background color, border, and border radius of the combo box */
@@ -131,9 +147,7 @@ QScrollArea {
 
 /* Sets the background color, border, and border radius of the empty panel frame */
 QFrame#emptyPanel {
-  background-color: #F5F7FA;
-  /* border: 1px solid #E1E8ED; */ /* Enable this line to see the border of the empty panel frame */
-  border-radius: 8px;
+  background-color: rgb(189, 215, 255);
 }
 
 /* Sets the background color, border, border radius, and color of the initial chart widget frame */

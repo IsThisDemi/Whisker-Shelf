@@ -462,7 +462,7 @@ namespace View
             {
                 if (widget->getId() == newMedia->getId())
                 {
-                    widget->setBackGroundColor(QColor("#3E0040")); // Set the backgroundWidget border color to dark purple
+                    widget->setBackGroundColor(QColor("rgb(100, 162, 255)")); // Set the backgroundWidget border color to our theme blue
                     break;
                 }
             }
