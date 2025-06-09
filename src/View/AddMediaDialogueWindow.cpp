@@ -16,6 +16,7 @@ namespace View
         // Create main layout
         mainLayout = new QVBoxLayout(this);
         mainLayout->setObjectName("AddMediaDialogueWindow");
+        setMinimumWidth(450);  // Set minimum width for the dialog
 
         // Create type layout
         typeLayout = new QHBoxLayout;
@@ -32,7 +33,7 @@ namespace View
         idLayout = new QHBoxLayout;
         idLabel = new QLabel("ID:", this);
         idLineEdit = new QLineEdit(this);
-        idLineEdit->setFixedSize(193, 26);
+        idLineEdit->setFixedSize(300, 26);
         idLayout->addWidget(idLabel);
         idLayout->addWidget(idLineEdit);
 
@@ -40,7 +41,7 @@ namespace View
         nameLayout = new QHBoxLayout;
         nameLabel = new QLabel("Title:", this);
         nameLineEdit = new QLineEdit(this);
-        nameLineEdit->setFixedSize(193, 26);
+        nameLineEdit->setFixedSize(300, 26);
         nameLayout->addWidget(nameLabel);
         nameLayout->addWidget(nameLineEdit);
 

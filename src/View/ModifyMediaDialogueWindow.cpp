@@ -47,6 +47,7 @@ namespace View
     void ModifyMediaDialogueWindow::setupUI() {
         // Set the title of the window
         setWindowTitle("Modify " + QString::fromStdString(type));
+        setMinimumWidth(450);  // Set minimum width for the dialog
 
         // Create a vertical layout for the main window
         mainLayout = new QVBoxLayout(this);
