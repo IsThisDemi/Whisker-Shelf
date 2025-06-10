@@ -78,7 +78,7 @@ namespace Utility
                 film_object.insert("author", QJsonValue::fromVariant(film.getAuthor().c_str()));
                 film_object.insert("description", QJsonValue::fromVariant(film.getDescription().c_str()));
                 film_object.insert("coverImage", QJsonValue::fromVariant(film.getCoverImage().c_str()));
-                film_object.insert("director", QJsonValue::fromVariant(film.getDirector().c_str()));
+                film_object.insert("productionCompany", QJsonValue::fromVariant(film.getProductionCompany().c_str()));
                 film_object.insert("duration", QJsonValue::fromVariant(film.getDuration()));
                 film_object.insert("genre", QJsonValue::fromVariant(film.getGenre().c_str()));
                 film_object.insert("budget", QJsonValue::fromVariant(film.getBudget()));

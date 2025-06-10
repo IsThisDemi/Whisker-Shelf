@@ -61,11 +61,11 @@ namespace View
         void createTheRestOfLabelsArticle(const std::string &journalName, const std::string &volumeNumber, const unsigned int &pageCount, const std::string &doi);
         void createTheRestOfLabelsAudio(const std::string &format, const std::string &album, const double &duration);
         void createTheRestOfLabelsBook(const std::string &publisher, const std::string &genre, const std::string &isbn, const double &pageCount);
-        void createTheRestOfLabelsFilm(const std::string &director, const std::string &genre, const double &duration, const double &budget);
+        void createTheRestOfLabelsFilm(const std::string &productionCompany, const std::string &genre, const double &duration, const double &budget);
 
         unsigned int getId() const;
         void modify(Media::AbstractMedia *media);
-        void saveModify(Media::AbstractMedia *media, const std::string &name, const std::string &description, const std::string &brand, const double &value1, const double &value2,
+        void saveModify(Media::AbstractMedia *media, const std::string &name, const std::string &description, const std::string &author, const double &value1, const double &value2,
                        const std::string &value3, const double &value4, const std::string &coverImage);
 
         void setMediaTitleLabel(const std::string &title);

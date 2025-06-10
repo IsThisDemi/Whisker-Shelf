@@ -8,27 +8,27 @@ namespace Media
         const std::string publishDate,
         const std::string author,
         const std::string description,
-        const std::string director,
+        const std::string productionCompany,
         const unsigned int duration,
         const std::string genre,
         const double budget,
         const std::string coverImage)
         : AbstractMedia(id, title, publishDate, author, description, coverImage),
-          director(director),
+          productionCompany(productionCompany),
           duration(duration),
           genre(genre),
           budget(budget)
     {
     }
 
-    const std::string &Film::getDirector() const
+    const std::string &Film::getProductionCompany() const
     {
-        return director;
+        return productionCompany;
     }
 
-    Film &Film::setDirector(const std::string director)
+    Film &Film::setProductionCompany(const std::string productionCompany)
     {
-        this->director = director;
+        this->productionCompany = productionCompany;
         return *this;
     }
 

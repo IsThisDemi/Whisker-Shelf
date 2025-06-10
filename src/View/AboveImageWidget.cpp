@@ -68,13 +68,13 @@ namespace View
         mediaValue4Label->setText("Pages: " + QString::number(pageCount));
     }
 
-    void AboveImageWidget::createTheRestOfLabelsFilm(const std::string &director, const std::string &genre, const double &duration, const double &budget)
+    void AboveImageWidget::createTheRestOfLabelsFilm(const std::string &productionCompany, const std::string &genre, const double &duration, const double &budget)
     {
         if (!mediaValue1Label) mediaValue1Label = new QLabel(this);
         if (!mediaValue2Label) mediaValue2Label = new QLabel(this);
         if (!mediaValue3Label) mediaValue3Label = new QLabel(this);
         if (!mediaValue4Label) mediaValue4Label = new QLabel(this);
-        mediaValue1Label->setText("Director: " + QString::fromStdString(director));
+        mediaValue1Label->setText("Production Company: " + QString::fromStdString(productionCompany));
         mediaValue2Label->setText("Genre: " + QString::fromStdString(genre));
         mediaValue3Label->setText("Duration: " + QString::number(duration) + " min");
         mediaValue4Label->setText("Budget: $" + QString::number(budget));
@@ -268,13 +268,13 @@ namespace View
                                                        mediaFields, article->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this, 
-                   [this, article](const std::string &name, const std::string &description, const std::string &brand,
+                   [this, article](const std::string &name, const std::string &description, const std::string &author,
                          const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
                          const std::string &coverImage) {
                        // Update media object
                        article->setTitle(name);
                        article->setDescription(description);
-                       article->setAuthor(brand);
+                       article->setAuthor(author);
                        article->setPageCount(std::get<unsigned int>(fields.at("pageCount")));
                        article->setJournalName(std::get<std::string>(fields.at("journalName")));
                        article->setVolumeNumber(std::get<std::string>(fields.at("volumeNumber")));
@@ -307,13 +307,13 @@ namespace View
                                                        mediaFields, audio->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this,
-                   [this, audio](const std::string &name, const std::string &description, const std::string &brand,
+                   [this, audio](const std::string &name, const std::string &description, const std::string &author,
                          const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
                          const std::string &coverImage) {
                        // Update media object
                        audio->setTitle(name);
                        audio->setDescription(description);
-                       audio->setAuthor(brand);
+                       audio->setAuthor(author);
                        audio->setDuration(std::get<unsigned int>(fields.at("duration")));
                        audio->setFormat(std::get<std::string>(fields.at("format")));
                        audio->setAlbum(std::get<std::string>(fields.at("album")));
@@ -346,13 +346,13 @@ namespace View
                                                        mediaFields, book->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this,
-                   [this, book](const std::string &name, const std::string &description, const std::string &brand,
+                   [this, book](const std::string &name, const std::string &description, const std::string &author,
                          const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
                          const std::string &coverImage) {
                        // Update media object
                        book->setTitle(name);
                        book->setDescription(description);
-                       book->setAuthor(brand);
+                       book->setAuthor(author);
                        book->setPageCount(std::get<unsigned int>(fields.at("pageCount")));
                        book->setPublisher(std::get<std::string>(fields.at("publisher")));
                        book->setGenre(std::get<std::string>(fields.at("genre")));
@@ -379,23 +379,24 @@ namespace View
             mediaFields["duration"] = film->getDuration();
             mediaFields["budget"] = film->getBudget();
             mediaFields["genre"] = film->getGenre();
-            mediaFields["rating"] = 0.0;
+            mediaFields["productionCompany"] = film->getProductionCompany();
 
             modifyWindow = new ModifyMediaDialogueWindow(film->getId(), "Film", film->getTitle(), 
-                                                       film->getDescription(), film->getDirector(),
+                                                       film->getDescription(), film->getAuthor(),
                                                        mediaFields, film->getCoverImage());
 
             connect(modifyWindow, &ModifyMediaDialogueWindow::saveModify, this,
-                   [this, film](const std::string &name, const std::string &description, const std::string &brand,
+                   [this, film](const std::string &name, const std::string &description, const std::string &author,
                          const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
                          const std::string &coverImage) {
                        // Update media object
                        film->setTitle(name);
                        film->setDescription(description);
-                       film->setDirector(brand);  // Note: brand is director for films
+                       film->setAuthor(author);
                        film->setDuration(std::get<unsigned int>(fields.at("duration")));
                        film->setBudget(std::get<double>(fields.at("budget")));
                        film->setGenre(std::get<std::string>(fields.at("genre")));
+                       film->setProductionCompany(std::get<std::string>(fields.at("productionCompany")));
                        if (!coverImage.empty()) {
                            film->setCoverImage(coverImage);
                        }
@@ -456,7 +457,7 @@ namespace View
     void AboveImageWidget::setMediaValue2Label(const std::string &type, const double &value)
     {
         if (type == "Film")
-            mediaValue2Label->setText("Rating: " + QString::number(value) + "/10");
+            mediaValue2Label->setText("Budget: $" + QString::number(value));
     }
 
     void AboveImageWidget::setMediaValue3Label(const std::string &type, const std::string &value)

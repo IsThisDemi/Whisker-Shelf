@@ -46,12 +46,22 @@ namespace View
         descriptionLayout->addWidget(descriptionLineEdit);
 
         // Create author layout
-        brandLayout = new QHBoxLayout;
-        brandLabel = new QLabel("Author:", this);
-        brandLineEdit = new QLineEdit(this);
-        brandLineEdit->setFixedSize(193, 26);
-        brandLayout->addWidget(brandLabel);
-        brandLayout->addWidget(brandLineEdit);
+        authorLayout = new QHBoxLayout;
+        authorLabel = new QLabel("Author:", this);
+        authorLineEdit = new QLineEdit(this);
+        authorLineEdit->setFixedSize(193, 26);
+        authorLayout->addWidget(authorLabel);
+        authorLayout->addWidget(authorLineEdit);
+
+        // Create production company layout (for Film)
+        productionCompanyLayout = new QHBoxLayout;
+        productionCompanyLabel = new QLabel("Production Company:", this);
+        productionCompanyLineEdit = new QLineEdit(this);
+        productionCompanyLineEdit->setFixedSize(193, 26);
+        productionCompanyLabel->hide();
+        productionCompanyLineEdit->hide();
+        productionCompanyLayout->addWidget(productionCompanyLabel);
+        productionCompanyLayout->addWidget(productionCompanyLineEdit);
 
         // Initialize all specific media type fields
         
@@ -167,10 +177,12 @@ namespace View
 
         // Add all layouts to main layout
         mainLayout->addLayout(typeLayout);
-        // mainLayout->addLayout(idLayout); rimosso 
         mainLayout->addLayout(nameLayout);
         mainLayout->addLayout(descriptionLayout);
-        mainLayout->addLayout(brandLayout);
+        mainLayout->addLayout(authorLayout);
+        mainLayout->addLayout(productionCompanyLayout);  // Add production company layout (will be shown/hidden as needed)
+
+        // Add media type specific fields layouts
         mainLayout->addLayout(journalLayout);
         mainLayout->addLayout(volumeLayout);
         mainLayout->addLayout(doiLayout);
@@ -201,7 +213,7 @@ namespace View
         return !(typeComboBox->currentIndex() == 0 &&
                  nameLineEdit->text().isEmpty() &&
                  descriptionLineEdit->text().isEmpty() &&
-                 brandLineEdit->text().isEmpty());
+                 authorLineEdit->text().isEmpty());
     }
 
     // Emit signal to start adding a new media
@@ -225,7 +237,7 @@ namespace View
         
         std::string title = nameLineEdit->text().toStdString();
         std::string description = descriptionLineEdit->text().toStdString();
-        std::string author = brandLineEdit->text().toStdString();
+        std::string author = authorLineEdit->text().toStdString();
 
         if (title.empty() || description.empty() || author.empty()) {
             QMessageBox::critical(this, "Error", "Title, description and author values cannot be empty!");
@@ -261,7 +273,7 @@ namespace View
             }
             
             std::string title = nameLineEdit->text().toStdString();
-            std::string author = brandLineEdit->text().toStdString();
+            std::string author = authorLineEdit->text().toStdString();
             
             media = new Media::Article(id, title, currentDate, author, description, 
                                      journal, volume, pages, doi);
@@ -311,7 +323,7 @@ namespace View
             }
             
             std::string title = nameLineEdit->text().toStdString();
-            std::string author = brandLineEdit->text().toStdString();
+            std::string author = authorLineEdit->text().toStdString();
             
             media = new Media::Book(id, title, currentDate, author, description,
                                   isbn, pages, publisher, genre);
@@ -329,7 +341,8 @@ namespace View
             
             std::string title = nameLineEdit->text().toStdString();
             std::string description = descriptionLineEdit->text().toStdString();
-            std::string director = brandLineEdit->text().toStdString();
+            std::string author = authorLineEdit->text().toStdString();
+            std::string productionCompany = productionCompanyLineEdit->text().toStdString();
             std::string genre = genreLineEdit->text().toStdString();
             bool budgetOk = true;
             double budget = budgetLineEdit->text().toDouble(&budgetOk);
@@ -339,13 +352,13 @@ namespace View
                 return;
             }
             
-            if (title.empty() || description.empty() || director.empty() || genre.empty()) {
-                QMessageBox::critical(this, "Error", "Title, description, director and genre cannot be empty!");
+            if (title.empty() || description.empty() || author.empty() || productionCompany.empty() || genre.empty()) {
+                QMessageBox::critical(this, "Error", "Title, description, author, production company and genre cannot be empty!");
                 return;
             }
             
-            media = new Media::Film(id, title, currentDate, director, description,
-                                  director, duration, genre, budget);
+            media = new Media::Film(id, title, currentDate, author, description,
+                                  productionCompany, duration, genre, budget);
             if (!selectedCoverPath.isEmpty()) {
                 media->setCoverImage(selectedCoverPath.toStdString());
             }
@@ -403,8 +416,9 @@ namespace View
         budgetLabel->setVisible(false);
         budgetLineEdit->setVisible(false);
 
-        // Update Author/Director label based on type
-        brandLabel->setText(type == "Film" ? "Director:" : "Author:");
+        // Show/hide Production Company field for Film
+        productionCompanyLabel->setVisible(type == "Film");
+        productionCompanyLineEdit->setVisible(type == "Film");
 
         // Show fields based on selected type
         if (type == "Article") {
@@ -479,7 +493,8 @@ namespace View
         delete typeComboBox;
         delete nameLineEdit;
         delete descriptionLineEdit;
-        delete brandLineEdit;
+        delete authorLineEdit;
+        delete productionCompanyLineEdit;
         delete journalLineEdit;
         delete volumeLineEdit;
         delete doiLineEdit;
@@ -495,7 +510,8 @@ namespace View
         delete typeLayout;
         delete nameLayout;
         delete descriptionLayout;
-        delete brandLayout;
+        delete authorLayout;
+        delete productionCompanyLayout;
         delete journalLayout;
         delete volumeLayout;
         delete doiLayout;

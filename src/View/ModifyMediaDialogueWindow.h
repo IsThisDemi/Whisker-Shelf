@@ -23,7 +23,7 @@ namespace View
         std::string type;
         std::string originalMediaName;
         std::string originalMediaDescription;
-        std::string originalMediaBrand;
+        std::string originalMediaAuthor;
         
         // Common fields across all media types
         std::string originalCoverImage;
@@ -46,16 +46,16 @@ namespace View
         std::string originalBookGenre;
 
         // Film specific fields
-        std::string originalDirector;
+        std::string originalProductionCompany;
         unsigned int originalFilmDuration;
         std::string originalFilmGenre;
         double originalBudget;
-        double originalRating;
 
         // UI Labels
         QLabel *nameLabel;
         QLabel *descriptionLabel;
-        QLabel *brandLabel;
+        QLabel *authorLabel;
+        QLabel *productionCompanyLabel;
         QLabel *coverImageLabel;
         QLabel *coverImagePreview;
         
@@ -68,7 +68,8 @@ namespace View
         // Common input fields
         QLineEdit *nameLineEdit;
         QLineEdit *descriptionLineEdit;
-        QLineEdit *brandLineEdit;
+        QLineEdit *authorLineEdit;
+        QLineEdit *productionCompanyLineEdit;
 
         // Media type specific input fields  
         QLineEdit *field1Edit;
@@ -83,7 +84,8 @@ namespace View
         QVBoxLayout *mainLayout;
         QHBoxLayout *nameLayout;
         QHBoxLayout *descriptionLayout;
-        QHBoxLayout *brandLayout;
+        QHBoxLayout *authorLayout;
+        QHBoxLayout *productionCompanyLayout;
         QHBoxLayout *coverImageLayout;
         QHBoxLayout *value1Layout;
         QHBoxLayout *value2Layout;
@@ -107,7 +109,7 @@ namespace View
 
     signals:
         void applySignal();
-        void saveModify(const std::string &name, const std::string &description, const std::string &brand,
+        void saveModify(const std::string &name, const std::string &description, const std::string &author,
                        const std::map<std::string, std::variant<std::string, unsigned int, double>> &mediaFields,
                        const std::string &coverImage);
 
@@ -121,7 +123,7 @@ namespace View
         explicit ModifyMediaDialogueWindow(const unsigned int &Id, const std::string &Type, 
                                        const std::string &MediaName,
                                        const std::string &MediaDescription, 
-                                       const std::string &MediaBrand,
+                                       const std::string &MediaAuthor,
                                        const std::map<std::string, std::variant<std::string, unsigned int, double>> &MediaFields,
                                        const std::string &CoverImage, 
                                        AbstractDialogueWindow *parent = nullptr);

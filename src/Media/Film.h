@@ -8,7 +8,7 @@ namespace Media
     class Film : public AbstractMedia
     {
     private:
-        std::string director;  /// Regista del film
+        std::string productionCompany;  /// Casa produttrice del film
         unsigned int duration; /// Durata in minuti
         std::string genre;     /// Genere cinematografico
         double budget;         /// Budget in dollari
@@ -20,20 +20,20 @@ namespace Media
             const std::string publishDate,
             const std::string author,
             const std::string description,
-            const std::string director,
+            const std::string productionCompany,
             const unsigned int duration,
             const std::string genre,
             const double budget,
             const std::string coverImage = "");
 
         // Getters
-        const std::string &getDirector() const;
+        const std::string &getProductionCompany() const;
         unsigned int getDuration() const;
         const std::string &getGenre() const;
         double getBudget() const;
 
         // Setters con method chaining
-        Film &setDirector(const std::string director);
+        Film &setProductionCompany(const std::string productionCompany);
         Film &setDuration(const unsigned int duration);
         Film &setGenre(const std::string genre);
         Film &setBudget(const double budget);

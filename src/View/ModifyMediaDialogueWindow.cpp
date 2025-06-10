@@ -7,11 +7,11 @@ namespace View
 
     // This is the constructor of the ModifyMediaDialogueWindow class
     ModifyMediaDialogueWindow::ModifyMediaDialogueWindow(const unsigned int &Id, const std::string &Type, const std::string &MediaName,
-                                                           const std::string &MediaDescription, const std::string &MediaBrand,
+                                                           const std::string &MediaDescription,                                                           const std::string &MediaAuthor,
                                                            const std::map<std::string, std::variant<std::string, unsigned int, double>> &MediaFields,
                                                            const std::string &CoverImage, AbstractDialogueWindow *parent)
         : AbstractDialogueWindow(parent), id(Id), type(Type), originalMediaName(MediaName),
-          originalMediaDescription(MediaDescription), originalMediaBrand(MediaBrand),
+          originalMediaDescription(MediaDescription), originalMediaAuthor(MediaAuthor),
           originalCoverImage(CoverImage)
     {
         // Initialize media type specific fields
@@ -33,11 +33,10 @@ namespace View
             originalBookGenre = std::get<std::string>(MediaFields.at("genre"));
         }
         else if (type == "Film") {
-            originalDirector = std::get<std::string>(MediaFields.at("director"));
+            originalProductionCompany = std::get<std::string>(MediaFields.at("productionCompany"));
             originalFilmDuration = std::get<unsigned int>(MediaFields.at("duration"));
             originalFilmGenre = std::get<std::string>(MediaFields.at("genre"));
             originalBudget = std::get<double>(MediaFields.at("budget"));
-            originalRating = std::get<double>(MediaFields.at("rating"));
         }
 
         setupUI();
@@ -88,40 +87,46 @@ namespace View
         descriptionLayout->addWidget(descriptionLineEdit);
         mainLayout->addLayout(descriptionLayout);
 
-        // Brand/Author field
-        brandLayout = new QHBoxLayout;
-        brandLabel = new QLabel(type == "Film" ? "Director:" : "Author:", this);
-        brandLineEdit = new QLineEdit(QString::fromStdString(originalMediaBrand), this);
-        brandLineEdit->setFixedSize(193, 26);
-        brandLayout->addWidget(brandLabel);
-        brandLayout->addWidget(brandLineEdit);
-        mainLayout->addLayout(brandLayout);
+        // Author field
+        authorLayout = new QHBoxLayout;
+        authorLabel = new QLabel("Author:", this);
+        authorLineEdit = new QLineEdit(QString::fromStdString(originalMediaAuthor), this);
+        authorLineEdit->setFixedSize(193, 26);
+        authorLayout->addWidget(authorLabel);
+        authorLayout->addWidget(authorLineEdit);
+        mainLayout->addLayout(authorLayout);
+
+        // Production Company field (only for Film)
+        if (type == "Film") {
+            productionCompanyLayout = new QHBoxLayout;
+            productionCompanyLabel = new QLabel("Production Company:", this);
+            productionCompanyLineEdit = new QLineEdit(QString::fromStdString(originalProductionCompany), this);
+            productionCompanyLineEdit->setFixedSize(193, 26);
+            productionCompanyLayout->addWidget(productionCompanyLabel);
+            productionCompanyLayout->addWidget(productionCompanyLineEdit);
+            mainLayout->addLayout(productionCompanyLayout);
+        }
     }
 
     void ModifyMediaDialogueWindow::setupMediaTypeSpecificFields() {
         field1Edit = new QLineEdit(this);
         field2Edit = new QLineEdit(this);
+        field3Edit = new QLineEdit(this);
         field4Edit = new QLineEdit(this);
         field1Edit->setFixedSize(193, 26);
         field2Edit->setFixedSize(193, 26);
+        field3Edit->setFixedSize(193, 26);
         field4Edit->setFixedSize(193, 26);
 
         QHBoxLayout *field1Layout = new QHBoxLayout;
         QHBoxLayout *field2Layout = new QHBoxLayout;
-        QHBoxLayout *field3Layout = nullptr;
+        QHBoxLayout *field3Layout = new QHBoxLayout;
         QHBoxLayout *field4Layout = new QHBoxLayout;
 
         field1Label = new QLabel(this);
         field2Label = new QLabel(this);
+        field3Label = new QLabel(this);
         field4Label = new QLabel(this);
-
-        // Creiamo field3 solo se non è Audio
-        if (type != "Audio") {
-            field3Edit = new QLineEdit(this);
-            field3Edit->setFixedSize(193, 26);
-            field3Layout = new QHBoxLayout;
-            field3Label = new QLabel(this);
-        }
 
         if (type == "Article") {
             setupArticleFields();
@@ -140,16 +145,14 @@ namespace View
         field1Layout->addWidget(field1Edit);
         field2Layout->addWidget(field2Label);
         field2Layout->addWidget(field2Edit);
+        field3Layout->addWidget(field3Label);
+        field3Layout->addWidget(field3Edit);
         field4Layout->addWidget(field4Label);
         field4Layout->addWidget(field4Edit);
 
         mainLayout->addLayout(field1Layout);
         mainLayout->addLayout(field2Layout);
-        if (type != "Audio") {
-            field3Layout->addWidget(field3Label);
-            field3Layout->addWidget(field3Edit);
-            mainLayout->addLayout(field3Layout);
-        }
+        mainLayout->addLayout(field3Layout);
         mainLayout->addLayout(field4Layout);
     }
 
@@ -171,11 +174,15 @@ namespace View
     void ModifyMediaDialogueWindow::setupAudioFields() {
         field1Label->setText("Duration (min):");
         field2Label->setText("Format:");
-        field4Label->setText("Album:");
+        field3Label->setText("Album:");
 
         field1Edit->setText(QString::number(originalDuration));
         field2Edit->setText(QString::fromStdString(originalFormat));
-        field4Edit->setText(QString::fromStdString(originalAlbum));
+        field3Edit->setText(QString::fromStdString(originalAlbum));
+
+        // Nascondo il quarto campo che non viene usato
+        field4Label->hide();
+        field4Edit->hide();
 
         // Set validator for duration
         field1Edit->setValidator(new QIntValidator(0, 999999, this));
@@ -200,15 +207,18 @@ namespace View
         field1Label->setText("Duration (min):");
         field2Label->setText("Budget:");
         field3Label->setText("Genre:");
-        field4Label->setText("Rating:");
 
         field1Edit->setText(QString::number(originalFilmDuration));
         field2Edit->setText(QString::number(originalBudget));
         field3Edit->setText(QString::fromStdString(originalFilmGenre));
-        field4Edit->setText(QString::number(originalRating));
+
+        // Nascondo il quarto campo che non viene usato
+        field4Label->hide();
+        field4Edit->hide();
 
         // Set validators
         field1Edit->setValidator(new QIntValidator(0, 999999, this));
+        field2Edit->setValidator(new QDoubleValidator(0, 999999999.99, 2, this));
         field2Edit->setValidator(new QDoubleValidator(0, 999999999.99, 2, this));
         field4Edit->setValidator(new QDoubleValidator(0, 10.0, 1, this));
     }
@@ -250,7 +260,7 @@ namespace View
     void ModifyMediaDialogueWindow::connectSignals() {
         connect(nameLineEdit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
         connect(descriptionLineEdit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
-        connect(brandLineEdit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
+        connect(authorLineEdit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
         connect(field1Edit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
         connect(field2Edit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
         connect(field3Edit, &QLineEdit::textChanged, this, &ModifyMediaDialogueWindow::afterTextChanged);
@@ -265,7 +275,9 @@ namespace View
     {
         if (nameLineEdit->text().toStdString() != originalMediaName ||
             descriptionLineEdit->text().toStdString() != originalMediaDescription ||
-            brandLineEdit->text().toStdString() != originalMediaBrand ||
+            authorLineEdit->text().toStdString() != originalMediaAuthor ||
+            (type == "Film" && productionCompanyLineEdit && 
+             productionCompanyLineEdit->text().toStdString() != originalProductionCompany) ||
             (selectedCoverPath != QString::fromStdString(originalCoverImage) && !selectedCoverPath.isEmpty()))
         {
             return true;
@@ -284,7 +296,7 @@ namespace View
         else if (type == "Audio") {
             if (field1Edit->text().toUInt() != originalDuration ||
                 field2Edit->text().toStdString() != originalFormat ||
-                field4Edit->text().toStdString() != originalAlbum)
+                field3Edit->text().toStdString() != originalAlbum)
             {
                 return true;
             }
@@ -301,8 +313,7 @@ namespace View
         else if (type == "Film") {
             if (field1Edit->text().toUInt() != originalFilmDuration ||
                 field2Edit->text().toDouble() != originalBudget ||
-                field3Edit->text().toStdString() != originalFilmGenre ||
-                field4Edit->text().toDouble() != originalRating)
+                field3Edit->text().toStdString() != originalFilmGenre)
             {
                 return true;
             }
@@ -345,9 +356,12 @@ namespace View
     void ModifyMediaDialogueWindow::applySlot()
     {
         // Check if all common text fields are filled
-        if (nameLineEdit->text().isEmpty() || descriptionLineEdit->text().isEmpty() || brandLineEdit->text().isEmpty())
+        if (nameLineEdit->text().isEmpty() || descriptionLineEdit->text().isEmpty() || authorLineEdit->text().isEmpty() ||
+            (type == "Film" && productionCompanyLineEdit && productionCompanyLineEdit->text().isEmpty()))
         {
-            QMessageBox::critical(this, "Error", "Name, description and author/director fields are required!");
+            QMessageBox::critical(this, "Error", type == "Film" ? 
+                "Name, description, author and production company are required!" :
+                "Name, description and author are required!");
             return;
         }
 
@@ -360,7 +374,7 @@ namespace View
         // Store all values before closing the dialog
         std::string name = nameLineEdit->text().toStdString();
         std::string description = descriptionLineEdit->text().toStdString();
-        std::string brand = brandLineEdit->text().toStdString();
+        std::string author = authorLineEdit->text().toStdString();
         std::string coverImage = selectedCoverPath.toStdString();
         if (coverImage.empty()) {
             coverImage = originalCoverImage;
@@ -368,36 +382,35 @@ namespace View
 
         // Create a map of media-specific fields
         std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
-        
         if (type == "Article") {
             mediaFields["journalName"] = field1Edit->text().toStdString();
             mediaFields["volumeNumber"] = field2Edit->text().toStdString();
-            mediaFields["pageCount"] = field3Edit->text().toUInt();
+            mediaFields["pageCount"] = static_cast<unsigned int>(field3Edit->text().toUInt());
             mediaFields["doi"] = field4Edit->text().toStdString();
-        }
+        } 
         else if (type == "Audio") {
-            mediaFields["duration"] = field1Edit->text().toUInt();
+            mediaFields["duration"] = static_cast<unsigned int>(field1Edit->text().toUInt());
             mediaFields["format"] = field2Edit->text().toStdString();
-            mediaFields["album"] = field4Edit->text().toStdString();
+            mediaFields["album"] = field3Edit->text().toStdString();
         }
         else if (type == "Book") {
             mediaFields["isbn"] = field1Edit->text().toStdString();
-            mediaFields["pageCount"] = field2Edit->text().toUInt();
+            mediaFields["pageCount"] = static_cast<unsigned int>(field2Edit->text().toUInt());
             mediaFields["publisher"] = field3Edit->text().toStdString();
             mediaFields["genre"] = field4Edit->text().toStdString();
         }
         else if (type == "Film") {
-            mediaFields["duration"] = field1Edit->text().toUInt();
+            mediaFields["productionCompany"] = productionCompanyLineEdit->text().toStdString();
+            mediaFields["duration"] = static_cast<unsigned int>(field1Edit->text().toUInt());
             mediaFields["budget"] = field2Edit->text().toDouble();
             mediaFields["genre"] = field3Edit->text().toStdString();
-            mediaFields["rating"] = field4Edit->text().toDouble();
         }
 
         // First accept the dialog (this will close it)
         QDialog::accept();
         
         // Then emit the signal with the stored values
-        emit saveModify(name, description, brand, mediaFields, coverImage); // Use accept() instead of close() to properly close the dialog
+        emit saveModify(name, description, author, mediaFields, coverImage);
     }
 
     // Apply changes to the media - used for name validation
@@ -409,47 +422,36 @@ namespace View
 
     bool ModifyMediaDialogueWindow::validateMediaTypeSpecificFields()
     {
-        if (field1Edit->text().isEmpty() || field2Edit->text().isEmpty() ||
-            field3Edit->text().isEmpty() || field4Edit->text().isEmpty())
-        {
-            QMessageBox::critical(this, "Error", "All fields are required!");
-            return false;
-        }
-
-        // Validate numeric fields based on media type
+        // Controlliamo i campi in base al tipo di media
         if (type == "Article") {
-            bool ok;
-            field3Edit->text().toUInt(&ok);
-            if (!ok) {
-                QMessageBox::critical(this, "Error", "Page count must be a valid number!");
+            if (field1Edit->text().isEmpty() || field2Edit->text().isEmpty() ||
+                field3Edit->text().isEmpty() || field4Edit->text().isEmpty())
+            {
+                QMessageBox::critical(this, "Error", "Journal name, volume number, page count and DOI are required!");
                 return false;
             }
         }
-        else if (type == "Audio" || type == "Film") {
-            bool ok;
-            field1Edit->text().toUInt(&ok);
-            if (!ok) {
-                QMessageBox::critical(this, "Error", "Duration must be a valid number!");
+        else if (type == "Audio") {
+            if (field1Edit->text().isEmpty() || field2Edit->text().isEmpty() ||
+                field3Edit->text().isEmpty())
+            {
+                QMessageBox::critical(this, "Error", "Duration, format and album are required!");
                 return false;
-            }
-            if (type == "Film") {
-                field2Edit->text().toDouble(&ok);
-                if (!ok) {
-                    QMessageBox::critical(this, "Error", "Budget must be a valid number!");
-                    return false;
-                }
-                double rating = field4Edit->text().toDouble(&ok);
-                if (!ok || rating < 0 || rating > 10) {
-                    QMessageBox::critical(this, "Error", "Rating must be a number between 0 and 10!");
-                    return false;
-                }
             }
         }
         else if (type == "Book") {
-            bool ok;
-            field2Edit->text().toUInt(&ok);
-            if (!ok) {
-                QMessageBox::critical(this, "Error", "Page count must be a valid number!");
+            if (field1Edit->text().isEmpty() || field2Edit->text().isEmpty() ||
+                field3Edit->text().isEmpty() || field4Edit->text().isEmpty())
+            {
+                QMessageBox::critical(this, "Error", "ISBN, page count, publisher and genre are required!");
+                return false;
+            }
+        }
+        else if (type == "Film") {
+            if (field1Edit->text().isEmpty() || field2Edit->text().isEmpty() ||
+                field3Edit->text().isEmpty())
+            {
+                QMessageBox::critical(this, "Error", "Duration, budget and genre are required!");
                 return false;
             }
         }
@@ -481,7 +483,7 @@ namespace View
         // Delete labels
         delete nameLabel;
         delete descriptionLabel;
-        delete brandLabel;
+        delete authorLabel;
         delete field1Label;
         delete field2Label;
         if (type != "Audio") {
@@ -495,7 +497,7 @@ namespace View
         // Delete input fields
         delete nameLineEdit;
         delete descriptionLineEdit;
-        delete brandLineEdit;
+        delete authorLineEdit;
         delete field1Edit;
         delete field2Edit;
         delete field4Edit;
@@ -508,7 +510,7 @@ namespace View
         // Delete layouts
         delete nameLayout;
         delete descriptionLayout;
-        delete brandLayout;
+        delete authorLayout;
         delete value1Layout;
         delete value2Layout;
         delete value3Layout;

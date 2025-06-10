@@ -257,8 +257,8 @@ namespace View
         else if (typeid(*media) == typeid(Media::Film)) {
             Media::Film* film = static_cast<Media::Film*>(media);
             QString title = QString::fromStdString(film->getTitle());
-            QString directorGenre = QString::fromStdString(film->getDirector() + " - " + film->getGenre());
-            widget->setName(title + "\n" + directorGenre);
+            QString productionAndGenre = QString::fromStdString(film->getProductionCompany() + " - " + film->getGenre());
+            widget->setName(title + "\n" + productionAndGenre);
             widget->setId(film->getId());
             widget->setData(film->getDuration(), " min");
         }

@@ -37,7 +37,7 @@ void AboveImageLabelsCreatorVisitor::visit(const Media::Book& book) {
 void AboveImageLabelsCreatorVisitor::visit(const Media::Film& film) {
     // Chiama il metodo di AboveImageWidget per Film
     aboveImageWidget->createTheRestOfLabelsFilm(
-        film.getDirector(),
+        film.getProductionCompany(),
         film.getGenre(),
         film.getDuration(),
         film.getBudget()

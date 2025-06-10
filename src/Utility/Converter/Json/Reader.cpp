@@ -105,7 +105,7 @@ namespace Utility {
                     object.value("publishDate").toString().toStdString(),
                     object.value("author").toString().toStdString(),
                     object.value("description").toString().toStdString(),
-                    object.value("director").toString().toStdString(),
+                    object.value("productionCompany").toString().toStdString(),
                     object.value("duration").toDouble(),
                     object.value("genre").toString().toStdString(),
                     object.value("budget").toDouble(),
