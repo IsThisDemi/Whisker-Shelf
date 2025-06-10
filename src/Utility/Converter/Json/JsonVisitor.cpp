@@ -45,7 +45,6 @@ namespace Utility
                 audio_object.insert("coverImage", QJsonValue::fromVariant(audio.getCoverImage().c_str()));
                 audio_object.insert("duration", QJsonValue::fromVariant(audio.getDuration()));
                 audio_object.insert("format", QJsonValue::fromVariant(audio.getFormat().c_str()));
-                audio_object.insert("artist", QJsonValue::fromVariant(audio.getArtist().c_str()));
                 audio_object.insert("album", QJsonValue::fromVariant(audio.getAlbum().c_str()));
                 object = audio_object; // Update the main JSON object
             }

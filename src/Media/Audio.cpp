@@ -10,13 +10,11 @@ namespace Media
         const std::string description,
         const unsigned int duration,
         const std::string format,
-        const std::string artist,
         const std::string album,
         const std::string coverImage)
         : AbstractMedia(id, title, publishDate, author, description, coverImage),
           duration(duration),
           format(format),
-          artist(artist),
           album(album)
     {
     }
@@ -43,16 +41,7 @@ namespace Media
         return *this;
     }
 
-    const std::string &Audio::getArtist() const
-    {
-        return artist;
-    }
 
-    Audio &Audio::setArtist(const std::string artist)
-    {
-        this->artist = artist;
-        return *this;
-    }
 
     const std::string &Audio::getAlbum() const
     {

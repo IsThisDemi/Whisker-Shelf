@@ -37,7 +37,6 @@ namespace View
         // Audio specific fields 
         unsigned int originalDuration;
         std::string originalFormat;
-        std::string originalArtist;
         std::string originalAlbum;
 
         // Book specific fields

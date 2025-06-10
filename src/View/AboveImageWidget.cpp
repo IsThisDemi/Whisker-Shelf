@@ -46,16 +46,14 @@ namespace View
         mediaValue4Label->setText("DOI: " + QString::fromStdString(doi));
     }
 
-    void AboveImageWidget::createTheRestOfLabelsAudio(const std::string &format, const std::string &artist, const std::string &album, const double &duration)
+    void AboveImageWidget::createTheRestOfLabelsAudio(const std::string &format, const std::string &album, const double &duration)
     {
         if (!mediaValue1Label) mediaValue1Label = new QLabel(this);
         if (!mediaValue2Label) mediaValue2Label = new QLabel(this);
         if (!mediaValue3Label) mediaValue3Label = new QLabel(this);
-        if (!mediaValue4Label) mediaValue4Label = new QLabel(this);
         mediaValue1Label->setText("Format: " + QString::fromStdString(format));
-        mediaValue2Label->setText("Artist: " + QString::fromStdString(artist));
-        mediaValue3Label->setText("Album: " + QString::fromStdString(album));
-        mediaValue4Label->setText("Duration: " + QString::number(duration) + " min");
+        mediaValue2Label->setText("Album: " + QString::fromStdString(album));
+        mediaValue3Label->setText("Duration: " + QString::number(duration) + " min");
     }
 
     void AboveImageWidget::createTheRestOfLabelsBook(const std::string &publisher, const std::string &genre, const std::string &isbn, const double &pageCount)
@@ -302,7 +300,6 @@ namespace View
             std::map<std::string, std::variant<std::string, unsigned int, double>> mediaFields;
             mediaFields["duration"] = audio->getDuration();
             mediaFields["format"] = audio->getFormat();
-            mediaFields["artist"] = audio->getArtist();
             mediaFields["album"] = audio->getAlbum();
 
             modifyWindow = new ModifyMediaDialogueWindow(audio->getId(), "Audio", audio->getTitle(), 
@@ -319,7 +316,6 @@ namespace View
                        audio->setAuthor(brand);
                        audio->setDuration(std::get<unsigned int>(fields.at("duration")));
                        audio->setFormat(std::get<std::string>(fields.at("format")));
-                       audio->setArtist(std::get<std::string>(fields.at("artist")));
                        audio->setAlbum(std::get<std::string>(fields.at("album")));
                        if (!coverImage.empty()) {
                            audio->setCoverImage(coverImage);
@@ -383,7 +379,7 @@ namespace View
             mediaFields["duration"] = film->getDuration();
             mediaFields["budget"] = film->getBudget();
             mediaFields["genre"] = film->getGenre();
-            mediaFields["rating"] = 0.0;  // Not used in current implementation
+            mediaFields["rating"] = 0.0;
 
             modifyWindow = new ModifyMediaDialogueWindow(film->getId(), "Film", film->getTitle(), 
                                                        film->getDescription(), film->getDirector(),

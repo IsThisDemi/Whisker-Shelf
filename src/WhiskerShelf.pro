@@ -27,9 +27,7 @@ SOURCES += \
     main.cpp\
     \
     View/MainWindow.cpp\
-    View/AboveChartLabelsCreatorVisitor.cpp\
     View/AboveImageLabelsCreatorVisitor.cpp\
-    View/AboveChartWidget.cpp\
     View/AbstractDialogueWindow.cpp\
     View/AddMediaDialogueWindow.cpp\
     View/ModifyMediaDialogueWindow.cpp\
@@ -62,9 +60,7 @@ HEADERS += \
     Media/MediaObserver.h\
     \
     View/MainWindow.h\
-    View/AboveChartLabelsCreatorVisitor.h\
     View/AboveImageLabelsCreatorVisitor.h\
-    View/AboveChartWidget.h\
     View/AbstractDialogueWindow.h\
     View/AddMediaDialogueWindow.h\
     View/ModifyMediaDialogueWindow.h\

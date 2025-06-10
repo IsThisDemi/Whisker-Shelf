@@ -12,7 +12,6 @@ namespace View
 
     private:
         QLabel *typeLabel;
-        QLabel *idLabel;
         QLabel *nameLabel;
         QLabel *descriptionLabel;
         QLabel *brandLabel;
@@ -26,14 +25,12 @@ namespace View
         QLabel *journalLabel;
         QLabel *volumeLabel;
         QLabel *doiLabel;
-        QLabel *artistLabel;
         QLabel *albumLabel;
         QLabel *isbnLabel;
         QLabel *publisherLabel;
         QLabel *budgetLabel;
 
         QComboBox *typeComboBox;
-        QLineEdit *idLineEdit;
         QLineEdit *nameLineEdit;
         QLineEdit *descriptionLineEdit;
         QLineEdit *brandLineEdit;
@@ -45,7 +42,6 @@ namespace View
         QLineEdit *journalLineEdit;
         QLineEdit *volumeLineEdit;
         QLineEdit *doiLineEdit;
-        QLineEdit *artistLineEdit;
         QLineEdit *albumLineEdit;
         QLineEdit *isbnLineEdit;
         QLineEdit *publisherLineEdit;
@@ -56,7 +52,6 @@ namespace View
 
         QVBoxLayout *mainLayout;
         QHBoxLayout *typeLayout;
-        QHBoxLayout *idLayout;
         QHBoxLayout *nameLayout;
         QHBoxLayout *descriptionLayout;
         QHBoxLayout *brandLayout;
@@ -68,7 +63,6 @@ namespace View
         QHBoxLayout *journalLayout;
         QHBoxLayout *volumeLayout;
         QHBoxLayout *doiLayout;
-        QHBoxLayout *artistLayout;
         QHBoxLayout *albumLayout;
         QHBoxLayout *isbnLayout;
         QHBoxLayout *publisherLayout;

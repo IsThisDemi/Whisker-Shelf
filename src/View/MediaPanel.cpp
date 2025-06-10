@@ -240,9 +240,9 @@ namespace View
         }
         else if (typeid(*media) == typeid(Media::Audio)) {
             Media::Audio* audio = static_cast<Media::Audio*>(media);
-            QString artistTitle = QString::fromStdString(audio->getArtist() + " - " + audio->getTitle());
+            QString authorTitle = QString::fromStdString(audio->getAuthor() + " - " + audio->getTitle());
             QString album = QString::fromStdString(audio->getAlbum());
-            widget->setName(artistTitle + "\n" + album);
+            widget->setName(authorTitle + "\n" + album);
             widget->setId(audio->getId());
             widget->setData(audio->getDuration() / 60.0, " min"); // Convert seconds to minutes
         }

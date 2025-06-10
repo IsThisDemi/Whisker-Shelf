@@ -29,14 +29,6 @@ namespace View
         typeLayout->addWidget(typeLabel);
         typeLayout->addWidget(typeComboBox);
 
-        // Create id layout
-        idLayout = new QHBoxLayout;
-        idLabel = new QLabel("ID:", this);
-        idLineEdit = new QLineEdit(this);
-        idLineEdit->setFixedSize(300, 26);
-        idLayout->addWidget(idLabel);
-        idLayout->addWidget(idLineEdit);
-
         // Create title layout
         nameLayout = new QHBoxLayout;
         nameLabel = new QLabel("Title:", this);
@@ -107,13 +99,6 @@ namespace View
         formatLayout->addWidget(formatLabel);
         formatLayout->addWidget(formatLineEdit);
 
-        artistLayout = new QHBoxLayout;
-        artistLabel = new QLabel("Artist:", this);
-        artistLineEdit = new QLineEdit(this);
-        artistLineEdit->setFixedSize(193, 26);
-        artistLayout->addWidget(artistLabel);
-        artistLayout->addWidget(artistLineEdit);
-
         albumLayout = new QHBoxLayout;
         albumLabel = new QLabel("Album:", this);
         albumLineEdit = new QLineEdit(this);
@@ -182,7 +167,7 @@ namespace View
 
         // Add all layouts to main layout
         mainLayout->addLayout(typeLayout);
-        mainLayout->addLayout(idLayout);
+        // mainLayout->addLayout(idLayout); rimosso 
         mainLayout->addLayout(nameLayout);
         mainLayout->addLayout(descriptionLayout);
         mainLayout->addLayout(brandLayout);
@@ -192,7 +177,6 @@ namespace View
         mainLayout->addLayout(pagesLayout);
         mainLayout->addLayout(durationLayout);
         mainLayout->addLayout(formatLayout);
-        mainLayout->addLayout(artistLayout);
         mainLayout->addLayout(albumLayout);
         mainLayout->addLayout(isbnLayout);
         mainLayout->addLayout(publisherLayout);
@@ -215,7 +199,6 @@ namespace View
     bool AddMediaDialogueWindow::differentFromOriginal() {
         // If all fields are empty or the default option is selected, it's not different from the original, otherwise it is
         return !(typeComboBox->currentIndex() == 0 &&
-                 idLineEdit->text().isEmpty() &&
                  nameLineEdit->text().isEmpty() &&
                  descriptionLineEdit->text().isEmpty() &&
                  brandLineEdit->text().isEmpty());
@@ -230,34 +213,33 @@ namespace View
 
     // Create and add a new media to the list of medias
     void AddMediaDialogueWindow::createAndAddMedia(const std::vector<Media::AbstractMedia *> &medias) {
-        bool ok = true;
-        unsigned int id = idLineEdit->text().toUInt(&ok);
-        if (!ok) {
-            QMessageBox::critical(this, "Error", "ID must be a non-negative integer!");
-            return;
+        // Find the highest ID currently in use
+        unsigned int maxId = 0;
+        for (Media::AbstractMedia *existingMedia : medias) {
+            if (existingMedia->getId() > maxId) {
+                maxId = existingMedia->getId();
+            }
         }
-        if (idLineEdit->text().length() != 6) {
-            QMessageBox::critical(this, "Error", "The ID must consist of exactly 6 digits!");
-            return;
-        }
+        // Generate the new ID by adding 1, starting from 000001 if list is empty
+        unsigned int id = (medias.empty()) ? 1 : maxId + 1;
+        
         std::string title = nameLineEdit->text().toStdString();
         std::string description = descriptionLineEdit->text().toStdString();
         std::string author = brandLineEdit->text().toStdString();
 
         if (title.empty() || description.empty() || author.empty()) {
-            QMessageBox::critical(this, "Error", "Id, title, description and author values cannot be empty!");
+            QMessageBox::critical(this, "Error", "Title, description and author values cannot be empty!");
             return;
         }
+
+        // Check if title is already in use
         for (Media::AbstractMedia *media : medias) {
-            if (media->getId() == id) {
-                QMessageBox::critical(this, "Error", "ID already in use");
-                return;
-            }
             if (media->getTitle() == title) {
-                QMessageBox::critical(this, "Error", "Name already in use");
+                QMessageBox::critical(this, "Error", "Title already in use");
                 return;
             }
         }
+
         std::string type = typeComboBox->currentText().toStdString();
         std::string currentDate = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
         Media::AbstractMedia *media = nullptr;
@@ -296,19 +278,17 @@ namespace View
             }
             
             std::string format = formatLineEdit->text().toStdString();
-            std::string artist = artistLineEdit->text().toStdString();
             std::string album = albumLineEdit->text().toStdString();
             
-            if (format.empty() || artist.empty()) {
-                QMessageBox::critical(this, "Error", "Format and artist cannot be empty!");
+            if (format.empty() || album.empty()) {
+                QMessageBox::critical(this, "Error", "Format and album cannot be empty!");
                 return;
             }
             
             std::string title = nameLineEdit->text().toStdString();
-            std::string author = brandLineEdit->text().toStdString();
             
             media = new Media::Audio(id, title, currentDate, author, description,
-                                   duration, format, artist, album);
+                                   duration, format, album);
             if (!selectedCoverPath.isEmpty()) {
                 media->setCoverImage(selectedCoverPath.toStdString());
             }
@@ -412,8 +392,6 @@ namespace View
         durationLineEdit->setVisible(false);
         formatLabel->setVisible(false);
         formatLineEdit->setVisible(false);
-        artistLabel->setVisible(false);
-        artistLineEdit->setVisible(false);
         albumLabel->setVisible(false);
         albumLineEdit->setVisible(false);
         isbnLabel->setVisible(false);
@@ -444,8 +422,6 @@ namespace View
             durationLineEdit->setVisible(true);
             formatLabel->setVisible(true);
             formatLineEdit->setVisible(true);
-            artistLabel->setVisible(true);
-            artistLineEdit->setVisible(true);
             albumLabel->setVisible(true);
             albumLineEdit->setVisible(true);
         }
@@ -490,29 +466,23 @@ namespace View
     // Destructor of the AddMediaDialogueWindow class
     // Deletes all dynamically allocated UI elements
     AddMediaDialogueWindow::~AddMediaDialogueWindow() {
-        delete typeLabel;
-        delete idLabel;
-        delete nameLabel;
-        delete descriptionLabel;
-        delete brandLabel;
         delete journalLabel;
         delete volumeLabel;
         delete doiLabel;
-        delete artistLabel;
         delete albumLabel;
         delete isbnLabel;
         delete publisherLabel;
         delete budgetLabel;
+        delete coverImageLabel;
+        delete coverImagePreview;
 
         delete typeComboBox;
-        delete idLineEdit;
         delete nameLineEdit;
         delete descriptionLineEdit;
         delete brandLineEdit;
         delete journalLineEdit;
         delete volumeLineEdit;
         delete doiLineEdit;
-        delete artistLineEdit;
         delete albumLineEdit;
         delete isbnLineEdit;
         delete publisherLineEdit;
@@ -520,21 +490,22 @@ namespace View
 
         delete discardButton;
         delete createButton;
+        delete selectCoverButton;
 
         delete typeLayout;
-        delete idLayout;
         delete nameLayout;
         delete descriptionLayout;
         delete brandLayout;
         delete journalLayout;
         delete volumeLayout;
         delete doiLayout;
-        delete artistLayout;
         delete albumLayout;
         delete isbnLayout;
         delete publisherLayout;
         delete budgetLayout;
+        delete coverImageLayout;
         delete buttonsLayout;
+
         delete mainLayout;
     }
 

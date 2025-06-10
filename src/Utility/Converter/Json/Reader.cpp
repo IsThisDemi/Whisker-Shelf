@@ -76,7 +76,6 @@ namespace Utility {
                     object.value("description").toString().toStdString(),
                     object.value("duration").toDouble(),
                     object.value("format").toString().toStdString(),
-                    object.value("artist").toString().toStdString(),
                     object.value("album").toString().toStdString(),
                     object.value("coverImage").toString().toStdString()
                 );

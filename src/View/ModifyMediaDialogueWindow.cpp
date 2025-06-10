@@ -24,7 +24,6 @@ namespace View
         else if (type == "Audio") {
             originalDuration = std::get<unsigned int>(MediaFields.at("duration"));
             originalFormat = std::get<std::string>(MediaFields.at("format"));
-            originalArtist = std::get<std::string>(MediaFields.at("artist"));
             originalAlbum = std::get<std::string>(MediaFields.at("album"));
         }
         else if (type == "Book") {
@@ -102,22 +101,27 @@ namespace View
     void ModifyMediaDialogueWindow::setupMediaTypeSpecificFields() {
         field1Edit = new QLineEdit(this);
         field2Edit = new QLineEdit(this);
-        field3Edit = new QLineEdit(this);
         field4Edit = new QLineEdit(this);
         field1Edit->setFixedSize(193, 26);
         field2Edit->setFixedSize(193, 26);
-        field3Edit->setFixedSize(193, 26);
         field4Edit->setFixedSize(193, 26);
 
         QHBoxLayout *field1Layout = new QHBoxLayout;
         QHBoxLayout *field2Layout = new QHBoxLayout;
-        QHBoxLayout *field3Layout = new QHBoxLayout;
+        QHBoxLayout *field3Layout = nullptr;
         QHBoxLayout *field4Layout = new QHBoxLayout;
 
         field1Label = new QLabel(this);
         field2Label = new QLabel(this);
-        field3Label = new QLabel(this);
         field4Label = new QLabel(this);
+
+        // Creiamo field3 solo se non è Audio
+        if (type != "Audio") {
+            field3Edit = new QLineEdit(this);
+            field3Edit->setFixedSize(193, 26);
+            field3Layout = new QHBoxLayout;
+            field3Label = new QLabel(this);
+        }
 
         if (type == "Article") {
             setupArticleFields();
@@ -136,14 +140,16 @@ namespace View
         field1Layout->addWidget(field1Edit);
         field2Layout->addWidget(field2Label);
         field2Layout->addWidget(field2Edit);
-        field3Layout->addWidget(field3Label);
-        field3Layout->addWidget(field3Edit);
         field4Layout->addWidget(field4Label);
         field4Layout->addWidget(field4Edit);
 
         mainLayout->addLayout(field1Layout);
         mainLayout->addLayout(field2Layout);
-        mainLayout->addLayout(field3Layout);
+        if (type != "Audio") {
+            field3Layout->addWidget(field3Label);
+            field3Layout->addWidget(field3Edit);
+            mainLayout->addLayout(field3Layout);
+        }
         mainLayout->addLayout(field4Layout);
     }
 
@@ -165,12 +171,10 @@ namespace View
     void ModifyMediaDialogueWindow::setupAudioFields() {
         field1Label->setText("Duration (min):");
         field2Label->setText("Format:");
-        field3Label->setText("Artist:");
         field4Label->setText("Album:");
 
         field1Edit->setText(QString::number(originalDuration));
         field2Edit->setText(QString::fromStdString(originalFormat));
-        field3Edit->setText(QString::fromStdString(originalArtist));
         field4Edit->setText(QString::fromStdString(originalAlbum));
 
         // Set validator for duration
@@ -280,7 +284,6 @@ namespace View
         else if (type == "Audio") {
             if (field1Edit->text().toUInt() != originalDuration ||
                 field2Edit->text().toStdString() != originalFormat ||
-                field3Edit->text().toStdString() != originalArtist ||
                 field4Edit->text().toStdString() != originalAlbum)
             {
                 return true;
@@ -375,7 +378,6 @@ namespace View
         else if (type == "Audio") {
             mediaFields["duration"] = field1Edit->text().toUInt();
             mediaFields["format"] = field2Edit->text().toStdString();
-            mediaFields["artist"] = field3Edit->text().toStdString();
             mediaFields["album"] = field4Edit->text().toStdString();
         }
         else if (type == "Book") {
@@ -482,7 +484,10 @@ namespace View
         delete brandLabel;
         delete field1Label;
         delete field2Label;
-        delete field3Label;
+        if (type != "Audio") {
+            delete field3Label;
+            delete field3Edit;
+        }
         delete field4Label;
         delete coverImageLabel;
         delete coverImagePreview;
@@ -493,7 +498,6 @@ namespace View
         delete brandLineEdit;
         delete field1Edit;
         delete field2Edit;
-        delete field3Edit;
         delete field4Edit;
 
         // Delete buttons

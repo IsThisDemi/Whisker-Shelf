@@ -19,7 +19,6 @@ void AboveImageLabelsCreatorVisitor::visit(const Media::Audio& audio) {
     // Chiama il metodo di AboveImageWidget per Audio
     aboveImageWidget->createTheRestOfLabelsAudio(
         audio.getFormat(),
-        audio.getArtist(),
         audio.getAlbum(),
         audio.getDuration()
     );
