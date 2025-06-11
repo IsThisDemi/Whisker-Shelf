@@ -102,8 +102,25 @@ namespace View
         // If there are unsaved changes
         if (!isSaved)
         {
-            QMessageBox::StandardButton ret = QMessageBox::warning(this, "Application", "Save unsaved changes?",
-                                                                   QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+            QMessageBox messageBox(QMessageBox::Warning, "Application", "Save unsaved changes?", 
+                                 QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, this);
+            
+            // Customize buttons style
+            QPushButton *saveButton = qobject_cast<QPushButton*>(messageBox.button(QMessageBox::Save));
+            QPushButton *discardButton = qobject_cast<QPushButton*>(messageBox.button(QMessageBox::Discard));
+            QPushButton *cancelButton = qobject_cast<QPushButton*>(messageBox.button(QMessageBox::Cancel));
+
+            // Set minimum width for buttons and adjust other properties
+            if (saveButton) saveButton->setMinimumWidth(100);
+            if (discardButton) discardButton->setMinimumWidth(100);
+            if (cancelButton) cancelButton->setMinimumWidth(100);
+            
+            // Set the text for buttons (optional, if you want different text)
+            if (saveButton) saveButton->setText("Save");
+            if (discardButton) discardButton->setText("Don't Save");
+            if (cancelButton) cancelButton->setText("Cancel");
+
+            QMessageBox::StandardButton ret = static_cast<QMessageBox::StandardButton>(messageBox.exec());
 
             // If the user cancels, return false
             if (ret == QMessageBox::Cancel)
