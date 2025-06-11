@@ -7,10 +7,9 @@ namespace Media
     AbstractMedia::AbstractMedia(
         const unsigned int id,
         const std::string title,
-        const std::string publishDate,
         const std::string author,
         const std::string description,
-        const std::string coverImage) : id(id), title(title), publishDate(publishDate), author(author), description(description), coverImage(coverImage) {}
+        const std::string coverImage) : id(id), title(title), author(author), description(description), coverImage(coverImage) {}
 
     // Destructor
     // Default destructor
@@ -33,20 +32,6 @@ namespace Media
     AbstractMedia &AbstractMedia::setTitle(const std::string title)
     {
         this->title = title;
-        return *this;
-    }
-
-    // Get the publish date of the media
-    const std::string AbstractMedia::getPublishDate() const
-    {
-        return publishDate;
-    }
-
-    // Set the publish date of the media
-    // Return a reference to the media
-    AbstractMedia &AbstractMedia::setPublishDate(const std::string publishDate)
-    {
-        this->publishDate = publishDate;
         return *this;
     }
 

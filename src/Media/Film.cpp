@@ -5,7 +5,6 @@ namespace Media
     Film::Film(
         const unsigned int id,
         const std::string title,
-        const std::string publishDate,
         const std::string author,
         const std::string description,
         const std::string productionCompany,
@@ -13,7 +12,7 @@ namespace Media
         const std::string genre,
         const double budget,
         const std::string coverImage)
-        : AbstractMedia(id, title, publishDate, author, description, coverImage),
+        : AbstractMedia(id, title, author, description, coverImage),
           productionCompany(productionCompany),
           duration(duration),
           genre(genre),

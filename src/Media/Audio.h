@@ -16,7 +16,6 @@ namespace Media
         Audio(
             const unsigned int id,
             const std::string title,
-            const std::string publishDate,
             const std::string author,
             const std::string description,
             const unsigned int duration,

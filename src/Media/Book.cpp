@@ -5,7 +5,6 @@ namespace Media
     Book::Book(
         const unsigned int id,
         const std::string title,
-        const std::string publishDate,
         const std::string author,
         const std::string description,
         const std::string isbn,
@@ -13,7 +12,7 @@ namespace Media
         const std::string publisher,
         const std::string genre,
         const std::string coverImage)
-        : AbstractMedia(id, title, publishDate, author, description, coverImage),
+        : AbstractMedia(id, title, author, description, coverImage),
           isbn(isbn),
           pageCount(pageCount),
           publisher(publisher),

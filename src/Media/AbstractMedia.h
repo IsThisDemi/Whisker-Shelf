@@ -14,7 +14,6 @@ namespace Media {
         private:
             const unsigned int id;
             std::string title;
-            std::string publishDate;
             std::string author;
             std::string description;
             std::string coverImage;
@@ -24,7 +23,6 @@ namespace Media {
             AbstractMedia(
                 const unsigned int id, 
                 const std::string title, 
-                const std::string publishDate, 
                 const std::string author,
                 const std::string description,
                 const std::string coverImage = ""
@@ -35,8 +33,6 @@ namespace Media {
             unsigned int getId() const;
             const std::string getTitle() const;
             AbstractMedia& setTitle(const std::string title);
-            const std::string getPublishDate() const;
-            AbstractMedia& setPublishDate(const std::string publishDate);
             const std::string getAuthor() const;
             AbstractMedia& setAuthor(const std::string author);
             const std::string getDescription() const;

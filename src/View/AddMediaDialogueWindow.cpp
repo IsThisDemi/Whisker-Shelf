@@ -275,7 +275,7 @@ namespace View
             std::string title = nameLineEdit->text().toStdString();
             std::string author = authorLineEdit->text().toStdString();
             
-            media = new Media::Article(id, title, currentDate, author, description, 
+            media = new Media::Article(id, title, author, description, 
                                      journal, volume, pages, doi);
             if (!selectedCoverPath.isEmpty()) {
                 media->setCoverImage(selectedCoverPath.toStdString());
@@ -299,7 +299,7 @@ namespace View
             
             std::string title = nameLineEdit->text().toStdString();
             
-            media = new Media::Audio(id, title, currentDate, author, description,
+            media = new Media::Audio(id, title, author, description,
                                    duration, format, album);
             if (!selectedCoverPath.isEmpty()) {
                 media->setCoverImage(selectedCoverPath.toStdString());
@@ -325,7 +325,7 @@ namespace View
             std::string title = nameLineEdit->text().toStdString();
             std::string author = authorLineEdit->text().toStdString();
             
-            media = new Media::Book(id, title, currentDate, author, description,
+            media = new Media::Book(id, title, author, description,
                                   isbn, pages, publisher, genre);
             if (!selectedCoverPath.isEmpty()) {
                 media->setCoverImage(selectedCoverPath.toStdString());
@@ -357,7 +357,7 @@ namespace View
                 return;
             }
             
-            media = new Media::Film(id, title, currentDate, author, description,
+            media = new Media::Film(id, title, author, description,
                                   productionCompany, duration, genre, budget);
             if (!selectedCoverPath.isEmpty()) {
                 media->setCoverImage(selectedCoverPath.toStdString());

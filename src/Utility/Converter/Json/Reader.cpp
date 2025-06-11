@@ -55,7 +55,6 @@ namespace Utility {
                 return new Media::Article(
                     object.value("id").toInt(),
                     object.value("title").toString().toStdString(),
-                    object.value("publishDate").toString().toStdString(),
                     object.value("author").toString().toStdString(),
                     object.value("description").toString().toStdString(),
                     object.value("journalName").toString().toStdString(),
@@ -71,7 +70,6 @@ namespace Utility {
                 return new Media::Audio(
                     object.value("id").toInt(),
                     object.value("title").toString().toStdString(),
-                    object.value("publishDate").toString().toStdString(),
                     object.value("author").toString().toStdString(),
                     object.value("description").toString().toStdString(),
                     object.value("duration").toDouble(),
@@ -86,7 +84,6 @@ namespace Utility {
                 return new Media::Book(
                     object.value("id").toInt(),
                     object.value("title").toString().toStdString(),
-                    object.value("publishDate").toString().toStdString(),
                     object.value("author").toString().toStdString(),
                     object.value("description").toString().toStdString(),
                     object.value("isbn").toString().toStdString(),
@@ -102,7 +99,6 @@ namespace Utility {
                 return new Media::Film(
                     object.value("id").toInt(),
                     object.value("title").toString().toStdString(),
-                    object.value("publishDate").toString().toStdString(),
                     object.value("author").toString().toStdString(),
                     object.value("description").toString().toStdString(),
                     object.value("productionCompany").toString().toStdString(),

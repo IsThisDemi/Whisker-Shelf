@@ -5,7 +5,6 @@ namespace Media
     Article::Article(
         const unsigned int id,
         const std::string title,
-        const std::string publishDate,
         const std::string author,
         const std::string description,
         const std::string journalName,
@@ -13,7 +12,7 @@ namespace Media
         const unsigned int pageCount,
         const std::string doi,
         const std::string coverImage)
-        : AbstractMedia(id, title, publishDate, author, description, coverImage),
+        : AbstractMedia(id, title, author, description, coverImage),
           journalName(journalName),
           volumeNumber(volumeNumber),
           pageCount(pageCount),

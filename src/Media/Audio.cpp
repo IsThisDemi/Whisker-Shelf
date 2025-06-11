@@ -5,14 +5,13 @@ namespace Media
     Audio::Audio(
         const unsigned int id,
         const std::string title,
-        const std::string publishDate,
         const std::string author,
         const std::string description,
         const unsigned int duration,
         const std::string format,
         const std::string album,
         const std::string coverImage)
-        : AbstractMedia(id, title, publishDate, author, description, coverImage),
+        : AbstractMedia(id, title, author, description, coverImage),
           duration(duration),
           format(format),
           album(album)
