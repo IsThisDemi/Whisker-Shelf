@@ -11,6 +11,8 @@ namespace View
         Q_OBJECT
 
     private:
+        QString copyImageToProjectAndGetPath(const QString& originalImagePath);
+
         QLabel *typeLabel;
         QLabel *nameLabel;
         QLabel *descriptionLabel;

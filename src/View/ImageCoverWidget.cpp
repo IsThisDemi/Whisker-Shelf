@@ -1,4 +1,8 @@
 #include "ImageCoverWidget.h"
+#include <QDir>
+#include <QCoreApplication>
+#include <QDebug>
+#include <QFileInfo>
 
 namespace View
 {
@@ -27,14 +31,34 @@ namespace View
     void ImageCoverWidget::setImage(const QString &imagePath)
     {
         currentImagePath = imagePath;
-        QPixmap pixmap(imagePath);
+
+        QString absolutePath;
+        if (imagePath.startsWith(":/")) {
+            absolutePath = imagePath;
+        } else {
+            // Get the directory of the running binary
+            QDir binDir(QCoreApplication::applicationDirPath());
+            binDir.cdUp(); // MacOS
+            binDir.cdUp(); // Contents
+            binDir.cdUp(); // WhiskerShelf.app
+
+            // Se il percorso inizia con "../../../", rimuovi il prefisso
+            QString adjustedPath = imagePath;
+            if (adjustedPath.startsWith("../../../")) {
+                adjustedPath.remove(0, 9); // rimuovi "../../../"
+            }
+            
+            // Costruisci il percorso assoluto
+            absolutePath = binDir.absoluteFilePath(adjustedPath);
+        }
+
+        QPixmap pixmap(absolutePath);
+
         if (!pixmap.isNull()) {
-            // Scala l'immagine mantenendo l'aspect ratio per adattarla al widget
             QSize widgetSize = size();
             QPixmap scaledPixmap = pixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             imageLabel->setPixmap(scaledPixmap);
         } else {
-            // Se non c'è immagine, mostra un'immagine placeholder
             QPixmap defaultPixmap(":/Assets/Icons/media.png");
             QSize widgetSize = size();
             QPixmap scaledPixmap = defaultPixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);

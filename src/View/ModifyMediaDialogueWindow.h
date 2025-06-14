@@ -19,6 +19,8 @@ namespace View
         Q_OBJECT
 
     private:
+        QString copyImageToProjectAndGetPath(const QString& originalImagePath);
+
         unsigned int id;
         std::string type;
         std::string originalMediaName;

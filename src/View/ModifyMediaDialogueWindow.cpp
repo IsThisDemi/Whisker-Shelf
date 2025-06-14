@@ -1,6 +1,10 @@
 #include "ModifyMediaDialogueWindow.h"
 #include <QFileDialog>
 #include <QImageReader>
+#include <QDir>
+#include <QDateTime>
+#include <QCoreApplication>
+#include <QMessageBox>
 
 namespace View
 {
@@ -331,14 +335,52 @@ namespace View
         if (!fileName.isEmpty()) {
             QImage image(fileName);
             if (!image.isNull()) {
-                selectedCoverPath = fileName;
-                coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(
-                    coverImagePreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                afterTextChanged();
+                QString relativePath = copyImageToProjectAndGetPath(fileName);
+                if (!relativePath.isEmpty()) {
+                    selectedCoverPath = relativePath;
+                    coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(
+                        coverImagePreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                    afterTextChanged();
+                } else {
+                    QMessageBox::critical(this, "Error", "Failed to save the image!");
+                }
             } else {
                 QMessageBox::critical(this, "Error", "Failed to load the selected image!");
             }
         }
+    }
+
+    QString ModifyMediaDialogueWindow::copyImageToProjectAndGetPath(const QString& originalImagePath) {
+        if (originalImagePath.isEmpty())
+            return QString();
+
+        // Create a unique filename with timestamp
+        QFileInfo originalFile(originalImagePath);
+        QString newFileName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss_") + 
+                            originalFile.fileName();
+        
+        // Get the project root directory (where src folder is)
+        QDir projectDir(QCoreApplication::applicationDirPath());
+        projectDir.cdUp(); // up from MacOS
+        projectDir.cdUp(); // up from Contents
+        projectDir.cdUp(); // up from WhiskerShelf.app
+        
+        // Create images directory if it doesn't exist
+        QString imagesDir = projectDir.absolutePath() + "/images";
+        QDir().mkpath(imagesDir);
+        
+        QString destinationPath = imagesDir + "/" + newFileName;
+        
+        // If the destination file already exists, remove it
+        if (QFile::exists(destinationPath)) {
+            QFile::remove(destinationPath);
+        }
+        
+        // Copy the file
+        if (!QFile::copy(originalImagePath, destinationPath))
+            return QString();
+            
+        return "../../../images/" + newFileName;
     }
 
     // Enables the apply button if there are any changes to apply.

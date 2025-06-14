@@ -3,6 +3,10 @@
 #include <QWidget>
 #include <QFileDialog>
 #include <QImageReader>
+#include <QDir>
+#include <QDateTime>
+#include <QCoreApplication>
+#include <QMessageBox>
 
 namespace View
 {
@@ -256,6 +260,7 @@ namespace View
         std::string currentDate = QDate::currentDate().toString("yyyy-MM-dd").toStdString();
         Media::AbstractMedia *media = nullptr;
 
+        std::string coverImagePath = selectedCoverPath.toStdString();
         if (type == "Article") {
             bool pagesOk = true;
             unsigned int pages = pagesLineEdit->text().toUInt(&pagesOk);
@@ -266,102 +271,60 @@ namespace View
             std::string journal = journalLineEdit->text().toStdString();
             std::string volume = volumeLineEdit->text().toStdString();
             std::string doi = doiLineEdit->text().toStdString();
-            
             if (journal.empty() || volume.empty()) {
                 QMessageBox::critical(this, "Error", "Journal and volume cannot be empty!");
                 return;
             }
-            
-            std::string title = nameLineEdit->text().toStdString();
-            std::string author = authorLineEdit->text().toStdString();
-            
-            media = new Media::Article(id, title, author, description, 
-                                     journal, volume, pages, doi);
-            if (!selectedCoverPath.isEmpty()) {
-                media->setCoverImage(selectedCoverPath.toStdString());
-            }
-        } 
-        else if (type == "Audio") {
+            media = new Media::Article(id, title, author, description, journal, volume, pages, doi, coverImagePath);
+        } else if (type == "Audio") {
             bool durationOk = true;
             unsigned int duration = durationLineEdit->text().toUInt(&durationOk);
             if (!durationOk || duration == 0) {
                 QMessageBox::critical(this, "Error", "Duration must be a positive number!");
                 return;
             }
-            
             std::string format = formatLineEdit->text().toStdString();
             std::string album = albumLineEdit->text().toStdString();
-            
             if (format.empty() || album.empty()) {
                 QMessageBox::critical(this, "Error", "Format and album cannot be empty!");
                 return;
             }
-            
-            std::string title = nameLineEdit->text().toStdString();
-            
-            media = new Media::Audio(id, title, author, description,
-                                   duration, format, album);
-            if (!selectedCoverPath.isEmpty()) {
-                media->setCoverImage(selectedCoverPath.toStdString());
-            }
-        } 
-        else if (type == "Book") {
+            media = new Media::Audio(id, title, author, description, duration, format, album, coverImagePath);
+        } else if (type == "Book") {
             bool pagesOk = true;
             unsigned int pages = pagesLineEdit->text().toUInt(&pagesOk);
             if (!pagesOk || pages == 0) {
                 QMessageBox::critical(this, "Error", "Pages must be a positive number!");
                 return;
             }
-            
             std::string isbn = isbnLineEdit->text().toStdString();
             std::string publisher = publisherLineEdit->text().toStdString();
             std::string genre = genreLineEdit->text().toStdString();
-            
             if (isbn.empty() || publisher.empty() || genre.empty()) {
                 QMessageBox::critical(this, "Error", "ISBN, publisher and genre cannot be empty!");
                 return;
             }
-            
-            std::string title = nameLineEdit->text().toStdString();
-            std::string author = authorLineEdit->text().toStdString();
-            
-            media = new Media::Book(id, title, author, description,
-                                  isbn, pages, publisher, genre);
-            if (!selectedCoverPath.isEmpty()) {
-                media->setCoverImage(selectedCoverPath.toStdString());
-            }
-        } 
-        else if (type == "Film") {
+            media = new Media::Book(id, title, author, description, isbn, pages, publisher, genre, coverImagePath);
+        } else if (type == "Film") {
             bool durationOk = true;
             unsigned int duration = durationLineEdit->text().toUInt(&durationOk);
             if (!durationOk || duration == 0) {
                 QMessageBox::critical(this, "Error", "Duration must be a positive number!");
                 return;
             }
-            
-            std::string title = nameLineEdit->text().toStdString();
-            std::string description = descriptionLineEdit->text().toStdString();
-            std::string author = authorLineEdit->text().toStdString();
             std::string productionCompany = productionCompanyLineEdit->text().toStdString();
             std::string genre = genreLineEdit->text().toStdString();
             bool budgetOk = true;
             double budget = budgetLineEdit->text().toDouble(&budgetOk);
-            
             if (!budgetOk || budget < 0) {
                 QMessageBox::critical(this, "Error", "Budget must be a non-negative number!");
                 return;
             }
-            
             if (title.empty() || description.empty() || author.empty() || productionCompany.empty() || genre.empty()) {
                 QMessageBox::critical(this, "Error", "Title, description, author, production company and genre cannot be empty!");
                 return;
             }
-            
-            media = new Media::Film(id, title, author, description,
-                                  productionCompany, duration, genre, budget);
-            if (!selectedCoverPath.isEmpty()) {
-                media->setCoverImage(selectedCoverPath.toStdString());
-            }
+            media = new Media::Film(id, title, author, description, productionCompany, duration, genre, budget, coverImagePath);
         } else {
             QMessageBox::critical(this, "Error", "Invalid media type selected!");
             return;
@@ -373,6 +336,40 @@ namespace View
         }
         
         emit mediaAdded(media);
+    }
+
+    // Save the selected image to the project's images directory
+    QString AddMediaDialogueWindow::copyImageToProjectAndGetPath(const QString& originalImagePath) {
+        if (originalImagePath.isEmpty())
+            return QString();
+
+        // Create a unique filename with timestamp
+        QFileInfo originalFile(originalImagePath);
+        QString newFileName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss_") + 
+                            originalFile.fileName();
+        
+        // Get the project root directory (where src folder is)
+        QDir projectDir(QCoreApplication::applicationDirPath());
+        projectDir.cdUp(); // up from MacOS
+        projectDir.cdUp(); // up from Contents
+        projectDir.cdUp(); // up from WhiskerShelf.app
+        
+        // Create images directory if it doesn't exist
+        QString imagesDir = projectDir.absolutePath() + "/images";
+        QDir().mkpath(imagesDir);
+
+        QString destinationPath = imagesDir + "/" + newFileName;
+        
+        // If the destination file already exists, remove it
+        if (QFile::exists(destinationPath)) {
+            QFile::remove(destinationPath);
+        }
+        
+        // Copy the file
+        if (!QFile::copy(originalImagePath, destinationPath))
+            return QString();
+            
+        return "../../../images/" + newFileName;
     }
 
     // Discard changes and close the dialog if there are changes
@@ -468,9 +465,14 @@ namespace View
         if (!fileName.isEmpty()) {
             QImage image(fileName);
             if (!image.isNull()) {
-                selectedCoverPath = fileName;
-                coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(
-                    coverImagePreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                QString newPath = copyImageToProjectAndGetPath(fileName);
+                if (!newPath.isEmpty()) {
+                    selectedCoverPath = newPath;
+                    coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(
+                        coverImagePreview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                } else {
+                    QMessageBox::critical(this, "Error", "Failed to save the image!");
+                }
             } else {
                 QMessageBox::critical(this, "Error", "Failed to load the selected image!");
             }
