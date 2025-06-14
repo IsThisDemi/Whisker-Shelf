@@ -12,7 +12,6 @@ namespace Media
         std::string volumeNumber; /// Volume/numero della rivista
         unsigned int pageCount;   /// Numero di pagine
         std::string doi;          /// Digital Object Identifier
-        std::string coverImage;   /// Copertina dell'articolo
 
     public:
         Article(
@@ -31,14 +30,12 @@ namespace Media
         const std::string &getVolumeNumber() const;
         unsigned int getPageCount() const;
         const std::string &getDoi() const;
-        const std::string getCoverImage() const override;
 
         // Setters con method chaining
         Article &setJournalName(const std::string journalName);
         Article &setVolumeNumber(const std::string volumeNumber);
         Article &setPageCount(const unsigned int pageCount);
         Article &setDoi(const std::string doi);
-        Article& setCoverImage(const std::string coverImage) override;
 
         // Clone method
         Article *clone() const override;

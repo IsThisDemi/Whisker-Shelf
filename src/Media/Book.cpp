@@ -42,17 +42,6 @@ namespace Media
         return *this;
     }
 
-    const std::string Book::getCoverImage() const
-    {
-        return AbstractMedia::getCoverImage();
-    }
-
-    Book &Book::setCoverImage(const std::string coverImage)
-    {
-        AbstractMedia::setCoverImage(coverImage);
-        return *this;
-    }
-
     const std::string &Book::getPublisher() const
     {
         return publisher;

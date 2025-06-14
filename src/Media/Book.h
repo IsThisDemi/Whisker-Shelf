@@ -12,7 +12,6 @@ namespace Media
         unsigned int pageCount; /// Numero di pagine
         std::string publisher;  /// Casa editrice
         std::string genre;      /// Genere letterario
-        std::string coverImage; /// Copertina del libro
 
     public:
         Book(
@@ -31,14 +30,12 @@ namespace Media
         unsigned int getPageCount() const;
         const std::string &getPublisher() const;
         const std::string &getGenre() const;
-        const std::string getCoverImage() const override;
 
         // Setters con method chaining
         Book &setIsbn(const std::string isbn);
         Book &setPageCount(const unsigned int pageCount);
         Book &setPublisher(const std::string publisher);
         Book &setGenre(const std::string genre);
-        Book& setCoverImage(const std::string coverImage) override;
 
         // Clone method
         Book *clone() const override;

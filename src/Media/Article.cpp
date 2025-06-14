@@ -64,17 +64,6 @@ namespace Media
         return *this;
     }
 
-    const std::string Article::getCoverImage() const
-    {
-        return AbstractMedia::getCoverImage();
-    }
-
-    Article &Article::setCoverImage(const std::string coverImage)
-    {
-        AbstractMedia::setCoverImage(coverImage);
-        return *this;
-    }
-
     Article *Article::clone() const
     {
         return new Article(*this);
