@@ -1,4 +1,4 @@
-<img src="https://github.com/user-attachments/assets/7a19cbb0-6d4a-41d1-9351-15aedaeaa78b" width="100" height="100" />
+<img src="https://github.com/user-attachments/assets/fd690d2b-080c-4eec-828e-5964202b7d02" width="100" height="100" />
 
 # Whisker Shelf
 
