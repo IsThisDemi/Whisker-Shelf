@@ -69,9 +69,15 @@ namespace View
             #ifdef Q_OS_MAC
                 absolutePath = binDir.absoluteFilePath("images/" + filename);
             #else
-                // Su Linux prima entriamo in src
-                binDir.cd("src");
-                absolutePath = binDir.absoluteFilePath("images/" + filename);
+                if (adjustedPath.startsWith("images/")) {
+                    // Se il percorso è già images/nome.png
+                    binDir.cd("src");
+                    absolutePath = binDir.absoluteFilePath(adjustedPath);
+                } else {
+                    // Se il percorso è solo il nome del file
+                    binDir.cd("src");
+                    absolutePath = binDir.absoluteFilePath("images/" + filename);
+                }
             #endif
             
             // Verifica se il file esiste
