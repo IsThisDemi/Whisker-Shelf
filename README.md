@@ -1,7 +1,6 @@
-<img src="https://github.com/user-attachments/assets/fd690d2b-080c-4eec-828e-5964202b7d02" width="100" height="100" />
+<img src="https://github.com/user-attachments/assets/e67a913c-08b1-4eec-b167-d9cfe477c1c8" width="100" height="100" />
 
 # Whisker Shelf
-
 
 Progetto per il corso di *Programmazione ad oggetti* anno 2024-2025
 
