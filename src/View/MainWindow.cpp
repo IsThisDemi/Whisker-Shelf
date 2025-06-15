@@ -429,9 +429,11 @@ namespace View
             {
                 // Try to use the media's cover image first
                 QString coverImage = QString::fromStdString(media->getCoverImage());
+                qDebug() << "\nMainWindow::mediaModifiedHandler - Got cover image path:" << coverImage;
                 if (!coverImage.isEmpty()) {
                     imageCoverWidget->setImage(coverImage);
                 } else {
+                    qDebug() << "MainWindow::mediaModifiedHandler - No cover image, using default icon";
                     // If no cover image, use the default icon
                     QString imagePath;
                     if (dynamic_cast<Media::Article *>(media))

@@ -38,6 +38,7 @@ namespace View
             absolutePath = imagePath;
             qDebug() << "Resource path detected:" << absolutePath;
         } else {
+            qDebug() << "\nImageCoverWidget::setImage - Processing path:" << imagePath;
             // Get the application directory path
             QString appPath = QCoreApplication::applicationDirPath();
             
@@ -63,16 +64,16 @@ namespace View
                 absolutePath = binDir.absoluteFilePath("images/" + filename);
                 qDebug() << "Mac path:" << absolutePath;
             #else
+                // Su Linux, prima controlliamo se il file esiste in src/images
                 QString srcPath = binDir.absoluteFilePath("src/images/" + filename);
-                if (QFile::exists(srcPath)) {
-                    absolutePath = srcPath;
-                    qDebug() << "Linux - Found at:" << absolutePath;
-                } else {
-                    // Se non esiste, usa il percorso base src/images
-                    absolutePath = srcPath;
-                    qDebug() << "Linux - Using default path:" << absolutePath;
-                }
+                qDebug() << "Checking Linux path:" << srcPath << "exists:" << QFile::exists(srcPath);
+                absolutePath = srcPath;
             #endif
+
+            // Verifica se il file esiste prima di usarlo
+            if (!QFile::exists(absolutePath)) {
+                qDebug() << "WARNING: File not found at:" << absolutePath;
+            }
             
             // Verifica se il file esiste
             QFileInfo check_file(absolutePath);
