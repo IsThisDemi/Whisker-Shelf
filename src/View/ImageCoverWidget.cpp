@@ -69,14 +69,17 @@ namespace View
             #ifdef Q_OS_MAC
                 absolutePath = binDir.absoluteFilePath("images/" + filename);
             #else
-                if (adjustedPath.startsWith("images/")) {
-                    // Se il percorso è già images/nome.png
-                    binDir.cd("src");
-                    absolutePath = binDir.absoluteFilePath(adjustedPath);
+                // Su Linux, prima controlliamo se il file esiste in src/images
+                QString srcPath = binDir.absoluteFilePath("src/images/" + filename);
+                if (QFile::exists(srcPath)) {
+                    absolutePath = srcPath;
                 } else {
-                    // Se il percorso è solo il nome del file
-                    binDir.cd("src");
-                    absolutePath = binDir.absoluteFilePath("images/" + filename);
+                    // Se non esiste in src/images, prova in src/
+                    if (adjustedPath.contains("images/")) {
+                        absolutePath = binDir.absoluteFilePath("src/" + adjustedPath);
+                    } else {
+                        absolutePath = binDir.absoluteFilePath("src/images/" + filename);
+                    }
                 }
             #endif
             
