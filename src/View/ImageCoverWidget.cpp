@@ -3,7 +3,6 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
-#include <QDebug>
 
 namespace View
 {
@@ -31,9 +30,7 @@ namespace View
 
     void ImageCoverWidget::setImage(const QString &imagePath)
     {
-        qDebug() << "[setImage] received path:" << imagePath;
         if (!imageLabel) {
-            qDebug() << "[setImage] imageLabel is null!";
             return;
         }
         currentImagePath = imagePath;
@@ -57,8 +54,6 @@ namespace View
             absolutePath = currentDir.absoluteFilePath("images/" + filename);
 #endif
         }
-        qDebug() << "[setImage] absolutePath:" << absolutePath;
-        qDebug() << "[setImage] file exists:" << QFile::exists(absolutePath);
 
         QPixmap pixmap;
         if (!absolutePath.isEmpty() && QFile::exists(absolutePath)) {
@@ -69,13 +64,11 @@ namespace View
             QSize widgetSize = size();
             QPixmap scaledPixmap = pixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             imageLabel->setPixmap(scaledPixmap);
-            qDebug() << "[setImage] pixmap loaded and set.";
         } else {
             QPixmap defaultPixmap(":/Assets/Icons/media.png");
             QSize widgetSize = size();
             QPixmap scaledPixmap = defaultPixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             imageLabel->setPixmap(scaledPixmap);
-            qDebug() << "[setImage] default pixmap set.";
         }
     }
 

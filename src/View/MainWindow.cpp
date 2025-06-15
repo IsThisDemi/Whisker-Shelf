@@ -443,8 +443,6 @@ namespace View
         } catch (...) {
             coverImage = "";
         }
-        qDebug() << "[mediaModifiedHandler] coverImage path =" << coverImage;
-
         if (!coverImage.isEmpty()) {
             imageCoverWidget->setImage(coverImage);
         } else {
