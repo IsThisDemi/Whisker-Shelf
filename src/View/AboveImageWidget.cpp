@@ -253,6 +253,14 @@ namespace View
 
     void AboveImageWidget::modify(Media::AbstractMedia *media)
     {
+        // Delete any existing modify window first
+        if (modifyWindow) {
+            modifyWindow->blockSignals(true);
+            modifyWindow->disconnect();
+            modifyWindow->deleteLater();
+            modifyWindow = nullptr;
+        }
+
         if (dynamic_cast<Media::Article *>(media))
         {
             Media::Article *article = static_cast<Media::Article *>(media);
@@ -271,27 +279,34 @@ namespace View
                    [this, article](const std::string &name, const std::string &description, const std::string &author,
                          const std::map<std::string, std::variant<std::string, unsigned int, double>> &fields,
                          const std::string &coverImage) {
-                       // Update media object
+                       // Capture the values we need before updating the UI
+                       auto pageCount = std::get<unsigned int>(fields.at("pageCount"));
+                       auto journalName = std::get<std::string>(fields.at("journalName"));
+                       auto volumeNumber = std::get<std::string>(fields.at("volumeNumber"));
+                       auto doi = std::get<std::string>(fields.at("doi"));
+                       
+                       // Update media object with captured values
                        article->setTitle(name);
                        article->setDescription(description);
                        article->setAuthor(author);
-                       article->setPageCount(std::get<unsigned int>(fields.at("pageCount")));
-                       article->setJournalName(std::get<std::string>(fields.at("journalName")));
-                       article->setVolumeNumber(std::get<std::string>(fields.at("volumeNumber")));
-                       article->setDoi(std::get<std::string>(fields.at("doi")));
+                       article->setPageCount(pageCount);
+                       article->setJournalName(journalName);
+                       article->setVolumeNumber(volumeNumber);
+                       article->setDoi(doi);
                        if (!coverImage.empty()) {
                            article->setCoverImage(coverImage);
                        }
 
-                       // Update UI
-                       createAboveImageForMedia(article);
-                       
-                       // Notify of changes
-                       emit setIsSaved(false);
-                       emit mediaModified(article->getId());
-                   });
+                       // Post UI update to next event loop to ensure dialog is fully destroyed
+                       QMetaObject::invokeMethod(this, [this, article]() {
+                           createAboveImageForMedia(article);
+                           emit setIsSaved(false);
+                           emit mediaModified(article->getId());
+                       }, Qt::QueuedConnection);
+                   }, Qt::QueuedConnection);
 
-            modifyWindow->exec();
+            // Show the dialog non-modal
+            modifyWindow->show();
         }
         else if (dynamic_cast<Media::Audio *>(media))
         {
@@ -327,9 +342,9 @@ namespace View
                        // Notify of changes
                        emit setIsSaved(false);
                        emit mediaModified(audio->getId());
-                   });
+                   }, Qt::QueuedConnection);
 
-            modifyWindow->exec();
+            modifyWindow->show();
         }
         else if (dynamic_cast<Media::Book *>(media))
         {
@@ -367,9 +382,9 @@ namespace View
                        // Notify of changes
                        emit setIsSaved(false);
                        emit mediaModified(book->getId());
-                   });
+                   }, Qt::QueuedConnection);
 
-            modifyWindow->exec();
+            modifyWindow->show();
         }
         else if (dynamic_cast<Media::Film *>(media))
         {
@@ -407,9 +422,9 @@ namespace View
                        // Notify of changes
                        emit setIsSaved(false);
                        emit mediaModified(film->getId());
-                   });
+                   }, Qt::QueuedConnection);
 
-            modifyWindow->exec();
+            modifyWindow->show();
         }
     }
 

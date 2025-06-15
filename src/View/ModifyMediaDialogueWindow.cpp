@@ -550,48 +550,47 @@ namespace View
         }
     }
 
-    // Free up memory when the dialog is destroyed
+    // Clean up resources when the dialog is destroyed
     ModifyMediaDialogueWindow::~ModifyMediaDialogueWindow()
     {
-        // Delete labels
-        delete nameLabel;
-        delete descriptionLabel;
-        delete authorLabel;
-        delete field1Label;
-        delete field2Label;
-        if (type != "Audio") {
-            delete field3Label;
-            delete field3Edit;
-        }
-        delete field4Label;
-        delete coverImageLabel;
-        delete coverImagePreview;
-
-        // Delete input fields
-        delete nameLineEdit;
-        delete descriptionLineEdit;
-        delete authorLineEdit;
-        delete field1Edit;
-        delete field2Edit;
-        delete field4Edit;
-
-        // Delete buttons
-        delete discardButton;
-        delete applyButton;
-        delete selectCoverButton;
-
-        // Delete layouts
-        delete nameLayout;
-        delete descriptionLayout;
-        delete authorLayout;
-        delete value1Layout;
-        delete value2Layout;
-        delete value3Layout;
-        delete value4Layout;
-        delete coverImageLayout;
-
-        // Delete main layout
-        delete mainLayout;
+        // Disconnect all signals first to prevent any pending slots from accessing deleted objects
+        this->blockSignals(true);  // Block signals before disconnecting to prevent any last-minute callbacks
+        this->disconnect();
+        
+        // Instead of calling deleteLater on individual widgets, let Qt handle the widget hierarchy cleanup
+        // Just null out our pointers after the base class destroys everything
+        nameLabel = nullptr;
+        descriptionLabel = nullptr;
+        authorLabel = nullptr;
+        field1Label = nullptr;
+        field2Label = nullptr;
+        field3Label = nullptr;
+        field3Edit = nullptr;
+        field4Label = nullptr;
+        coverImageLabel = nullptr;
+        coverImagePreview = nullptr;
+        nameLineEdit = nullptr;
+        descriptionLineEdit = nullptr;
+        authorLineEdit = nullptr;
+        field1Edit = nullptr;
+        field2Edit = nullptr;
+        field4Edit = nullptr;
+        discardButton = nullptr;
+        applyButton = nullptr;
+        selectCoverButton = nullptr;
+        
+        // Don't delete layouts manually, they will be cleaned up by Qt's parent-child mechanism
+        nameLayout = nullptr;
+        descriptionLayout = nullptr;
+        authorLayout = nullptr;
+        value1Layout = nullptr;
+        value2Layout = nullptr;
+        value3Layout = nullptr;
+        value4Layout = nullptr;
+        coverImageLayout = nullptr;
+        mainLayout = nullptr;
+        
+        // Do NOT call base class destructor explicitly, it will be called automatically
     }
 
 }
