@@ -57,17 +57,21 @@ namespace View
             // Handle the image path
             QString adjustedPath = imagePath;
             
-            // Rimuovi il prefisso relativo "../../../src/" se presente
+            // Rimuovi i prefissi relativi
             if (adjustedPath.startsWith("../../../src/")) {
                 adjustedPath = adjustedPath.mid(13); // rimuovi "../../../src/"
+            } else if (adjustedPath.startsWith("../src/")) {
+                adjustedPath = adjustedPath.mid(7); // rimuovi "../src/"
             }
             
+            QString filename = QFileInfo(adjustedPath).fileName();
+            
             #ifdef Q_OS_MAC
-                // Su Mac usa solo images/
-                absolutePath = binDir.absoluteFilePath("images/" + QFileInfo(adjustedPath).fileName());
+                absolutePath = binDir.absoluteFilePath("images/" + filename);
             #else
-                // Su Linux usa src/images/
-                absolutePath = binDir.absoluteFilePath("src/images/" + QFileInfo(adjustedPath).fileName());
+                // Su Linux prima entriamo in src
+                binDir.cd("src");
+                absolutePath = binDir.absoluteFilePath("images/" + filename);
             #endif
             
             // Verifica se il file esiste
