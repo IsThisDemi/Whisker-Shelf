@@ -30,11 +30,13 @@ namespace View
 
     void ImageCoverWidget::setImage(const QString &imagePath)
     {
+        qDebug() << "ImageCoverWidget::setImage - Received path:" << imagePath;
         currentImagePath = imagePath;
 
         QString absolutePath;
         if (imagePath.startsWith(":/")) {
             absolutePath = imagePath;
+            qDebug() << "Resource path detected:" << absolutePath;
         } else {
             // Get the application directory path
             QString appPath = QCoreApplication::applicationDirPath();
@@ -68,11 +70,19 @@ namespace View
             
             #ifdef Q_OS_MAC
                 absolutePath = binDir.absoluteFilePath("images/" + filename);
+                qDebug() << "Mac path:" << absolutePath;
             #else
+                qDebug() << "Linux - Binary dir:" << binDir.absolutePath();
+                qDebug() << "Linux - Filename:" << filename;
+                qDebug() << "Linux - Adjusted path:" << adjustedPath;
+                
                 // Su Linux, prima controlliamo se il file esiste in src/images
                 QString srcPath = binDir.absoluteFilePath("src/images/" + filename);
+                qDebug() << "Linux - Trying path:" << srcPath;
+                
                 if (QFile::exists(srcPath)) {
                     absolutePath = srcPath;
+                    qDebug() << "Linux - Found at:" << absolutePath;
                 } else {
                     // Se non esiste in src/images, prova in src/
                     if (adjustedPath.contains("images/")) {
@@ -80,6 +90,7 @@ namespace View
                     } else {
                         absolutePath = binDir.absoluteFilePath("src/images/" + filename);
                     }
+                    qDebug() << "Linux - Fallback path:" << absolutePath;
                 }
             #endif
             
@@ -87,12 +98,17 @@ namespace View
             QFileInfo check_file(absolutePath);
         }
 
+        qDebug() << "Final absolute path:" << absolutePath;
+        qDebug() << "File exists:" << QFile::exists(absolutePath);
+        
         QPixmap pixmap(absolutePath);
+        qDebug() << "Pixmap is null:" << pixmap.isNull();
 
         if (!pixmap.isNull()) {
             QSize widgetSize = size();
             QPixmap scaledPixmap = pixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             imageLabel->setPixmap(scaledPixmap);
+            qDebug() << "Successfully set pixmap";
         } else {
             QPixmap defaultPixmap(":/Assets/Icons/media.png");
             QSize widgetSize = size();
