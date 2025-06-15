@@ -17,19 +17,16 @@ QMainWindow {
   background-color: rgb(240, 245, 255);  /* Very light blue, almost white */
   border: 1px solid rgb(209, 225, 255);
   border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 #backgroundWidget:hover {
   background-color: rgb(230, 240, 255);  /* Light blue on hover */
   border-color: rgb(169, 195, 235);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 #backgroundWidget[selected="true"] {
   background-color: rgb(209, 225, 255);  /* Slightly darker blue when selected */
   border-color: rgb(169, 195, 235);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Icon label style */
@@ -104,7 +101,6 @@ QToolBar QToolButton {
 /* Sets the background color of the toolbar buttons when hovered over */
 QToolBar QToolButton:hover {
   background-color: #357ABD;
-  transition: background-color 0.2s ease-in-out;
 }
 
 /* Sets the background color of the toolbar buttons when pressed */
@@ -125,7 +121,6 @@ QPushButton {
 /* Sets the background color of the push buttons when hovered over */
 QPushButton:hover {
   background-color: #357ABD;
-  transition: background-color 0.2s ease-in-out;
 }
 
 /* Sets the background color of the push buttons when pressed */
@@ -163,7 +158,6 @@ QFrame#chartWidget {
   margin: 12px;
   background-color: white;
   border-radius: 30px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Sets the margin, background color, and border radius of the chart view */
@@ -199,7 +193,6 @@ QLineEdit#valueLineEditDisabled {
 QWidget#backgroundWidget {
   background-color: white;
   border-radius: 30px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Sets the background color of the media widget container */
