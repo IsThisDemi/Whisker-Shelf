@@ -1,7 +1,7 @@
 [
     {
         "author": "Mark Brown",
-        "coverImage": "../../../images/20250615_170205_hyenas.jpg",
+        "coverImage": "../../../src/images/20250615_170205_hyenas.jpg",
         "description": "Studio comparativo sul comportamento sociale delle iene maculate in Kenya: analisi delle gerarchie matriarcali e delle strategie di caccia cooperativa.",
         "doi": "123ABC",
         "id": 1,
@@ -14,7 +14,7 @@
     {
         "album": "Life",
         "author": "Yeat",
-        "coverImage": "../../../images/20250615_173429_Lyfë.jpeg",
+        "coverImage": "../../../src/images/20250615_173429_Lyfë.jpeg",
         "description": "Uno dei brani più iconici del rapper americano Yeat.",
         "duration": 166,
         "format": "mp3",
@@ -24,7 +24,7 @@
     },
     {
         "author": "L. Frank Baum",
-        "coverImage": "../../../images/20250615_173726_mago_oz.png",
+        "coverImage": "../../../src/images/20250615_173726_mago_oz.png",
         "description": "Dorothy e il suo cane Toto vengono trasportati da un tornado nel magico mondo di Oz.",
         "genre": "Fantasy",
         "id": 3,
@@ -37,7 +37,7 @@
     {
         "author": "John Lasseter",
         "budget": 40000000,
-        "coverImage": "../../../images/20250615_173859_Cars_Logo_Black.svg.png",
+        "coverImage": "../../../src/images/20250615_173859_Cars_Logo_Black.svg.png",
         "description": "Film animato di autovetture",
         "duration": 125,
         "genre": "Family",
