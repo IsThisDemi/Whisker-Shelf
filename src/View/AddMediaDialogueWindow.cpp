@@ -353,11 +353,11 @@ namespace View
         QString newFileName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss_") + 
                             originalFile.fileName();
         
-        // Get the project root directory (where src folder is)
-        QDir projectDir(QCoreApplication::applicationDirPath());
-        projectDir.cdUp(); // up from MacOS
-        projectDir.cdUp(); // up from Contents
-        projectDir.cdUp(); // up from WhiskerShelf.app
+        // Get the project root directory using the source file path
+        QString sourcePath = QString::fromUtf8(__FILE__);
+        QDir projectDir = QFileInfo(sourcePath).dir();  // View directory
+        projectDir.cdUp();  // src directory
+        projectDir.cdUp();  // WhiskerShelf directory
         
         // Create images directory if it doesn't exist
         QString imagesDir = projectDir.absolutePath() + "/images";
