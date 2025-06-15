@@ -435,13 +435,13 @@ namespace View
                     // If no cover image, use the default icon
                     QString imagePath;
                     if (dynamic_cast<Media::Article *>(media))
-                        imagePath = ":/Assets/Icons/article.png";
+                        imagePath = ":/Assets/Icons/Medias/article.png";
                     else if (dynamic_cast<Media::Audio *>(media))
-                        imagePath = ":/Assets/Icons/audio.png";
+                        imagePath = ":/Assets/Icons/Medias/audio.png";
                     else if (dynamic_cast<Media::Book *>(media))
-                        imagePath = ":/Assets/Icons/book.png";
+                        imagePath = ":/Assets/Icons/Medias/book.png";
                     else if (dynamic_cast<Media::Film *>(media))
-                        imagePath = ":/Assets/Icons/film.png";
+                        imagePath = ":/Assets/Icons/Medias/movie.png";
                     imageCoverWidget->setImage(imagePath);
                 }
                 break;

@@ -53,7 +53,7 @@ namespace View
         if (!mediaValue3Label) mediaValue3Label = new QLabel(this);
         mediaValue1Label->setText("Format: " + QString::fromStdString(format));
         mediaValue2Label->setText("Album: " + QString::fromStdString(album));
-        mediaValue3Label->setText("Duration: " + QString::number(duration) + " min");
+        mediaValue3Label->setText("Duration: " + QString::number(duration) + " sec");
     }
 
     void AboveImageWidget::createTheRestOfLabelsBook(const std::string &publisher, const std::string &genre, const std::string &isbn, const double &pageCount)
@@ -77,7 +77,7 @@ namespace View
         mediaValue1Label->setText("Production Company: " + QString::fromStdString(productionCompany));
         mediaValue2Label->setText("Genre: " + QString::fromStdString(genre));
         mediaValue3Label->setText("Duration: " + QString::number(duration) + " min");
-        mediaValue4Label->setText("Budget: $" + QString::number(budget));
+        mediaValue4Label->setText("Budget: $" + QString::number(budget, 'f', 2));
     }
 
     void AboveImageWidget::createGreyPanel()

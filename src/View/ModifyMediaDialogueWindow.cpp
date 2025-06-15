@@ -176,7 +176,7 @@ namespace View
     }
 
     void ModifyMediaDialogueWindow::setupAudioFields() {
-        field1Label->setText("Duration (min):");
+        field1Label->setText("Duration (sec):");
         field2Label->setText("Format:");
         field3Label->setText("Album:");
 
@@ -209,7 +209,7 @@ namespace View
 
     void ModifyMediaDialogueWindow::setupFilmFields() {
         field1Label->setText("Duration (min):");
-        field2Label->setText("Budget:");
+        field2Label->setText("Budget ($):");
         field3Label->setText("Genre:");
 
         field1Edit->setText(QString::number(originalFilmDuration));
