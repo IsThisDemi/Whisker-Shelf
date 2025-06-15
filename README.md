@@ -10,7 +10,7 @@ Per compilare Whisker Shelf usa il seguente codice:
 ```
  git clone https://github.com/IsThisDemi/Whisker-Shelf
  cd Whisker-Shelf/src
- qmake
+ qmake WhishkerShelf.pro
  make
 ```
 
