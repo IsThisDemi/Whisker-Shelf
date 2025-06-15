@@ -429,7 +429,7 @@ namespace View
             {
                 // Try to use the media's cover image first
                 QString coverImage = QString::fromStdString(media->getCoverImage());
-                if (!coverImage.isEmpty() && QFile::exists(coverImage)) {
+                if (!coverImage.isEmpty()) {
                     imageCoverWidget->setImage(coverImage);
                 } else {
                     // If no cover image, use the default icon
