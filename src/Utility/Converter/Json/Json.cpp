@@ -7,7 +7,7 @@ namespace Utility
     {
         namespace Json
         {
-            // Convert a sensor object to a JSON object
+            // Convert a media object to a JSON object
             QJsonObject Json::fromObject(const Media::AbstractMedia &media)
             {
                 JsonVisitor json_visitor;           // Create a JsonVisitor instance
@@ -15,11 +15,11 @@ namespace Utility
                 return json_visitor.getObject();    // Return the JSON object created by the visitor
             }
 
-            // Convert a JSON object to a sensor object
+            // Convert a JSON object to a media object
             Media::AbstractMedia &Json::toObject(const QJsonObject &json)
             {
                 Reader reader;               // Create a Reader instance
-                return *(reader.read(json)); // Read the JSON object and return the corresponding sensor object
+                return *(reader.read(json)); // Read the JSON object and return the corresponding media object
             }
 
         }
