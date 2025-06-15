@@ -62,8 +62,13 @@ namespace View
                 adjustedPath = adjustedPath.mid(13); // rimuovi "../../../src/"
             }
             
-            // Costruisci il percorso assoluto
-            absolutePath = binDir.absoluteFilePath("images/" + QFileInfo(adjustedPath).fileName());
+            #ifdef Q_OS_MAC
+                // Su Mac usa solo images/
+                absolutePath = binDir.absoluteFilePath("images/" + QFileInfo(adjustedPath).fileName());
+            #else
+                // Su Linux usa src/images/
+                absolutePath = binDir.absoluteFilePath("src/images/" + QFileInfo(adjustedPath).fileName());
+            #endif
             
             // Verifica se il file esiste
             QFileInfo check_file(absolutePath);
