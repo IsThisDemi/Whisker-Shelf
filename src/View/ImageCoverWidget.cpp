@@ -56,41 +56,21 @@ namespace View
                 binDir.cdUp();
             #endif
 
-            // Handle the image path
-            QString adjustedPath = imagePath;
-            
-            // Rimuovi i prefissi relativi
-            if (adjustedPath.startsWith("../../../src/")) {
-                adjustedPath = adjustedPath.mid(13); // rimuovi "../../../src/"
-            } else if (adjustedPath.startsWith("../src/")) {
-                adjustedPath = adjustedPath.mid(7); // rimuovi "../src/"
-            }
-            
-            QString filename = QFileInfo(adjustedPath).fileName();
+            // Get just the filename, stripping any path
+            QString filename = QFileInfo(imagePath).fileName();
             
             #ifdef Q_OS_MAC
                 absolutePath = binDir.absoluteFilePath("images/" + filename);
                 qDebug() << "Mac path:" << absolutePath;
             #else
-                qDebug() << "Linux - Binary dir:" << binDir.absolutePath();
-                qDebug() << "Linux - Filename:" << filename;
-                qDebug() << "Linux - Adjusted path:" << adjustedPath;
-                
-                // Su Linux, prima controlliamo se il file esiste in src/images
                 QString srcPath = binDir.absoluteFilePath("src/images/" + filename);
-                qDebug() << "Linux - Trying path:" << srcPath;
-                
                 if (QFile::exists(srcPath)) {
                     absolutePath = srcPath;
                     qDebug() << "Linux - Found at:" << absolutePath;
                 } else {
-                    // Se non esiste in src/images, prova in src/
-                    if (adjustedPath.contains("images/")) {
-                        absolutePath = binDir.absoluteFilePath("src/" + adjustedPath);
-                    } else {
-                        absolutePath = binDir.absoluteFilePath("src/images/" + filename);
-                    }
-                    qDebug() << "Linux - Fallback path:" << absolutePath;
+                    // Se non esiste, usa il percorso base src/images
+                    absolutePath = srcPath;
+                    qDebug() << "Linux - Using default path:" << absolutePath;
                 }
             #endif
             
