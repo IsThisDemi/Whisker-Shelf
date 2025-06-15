@@ -221,10 +221,8 @@ namespace View
         field4Edit->hide();
 
         // Set validators
-        field1Edit->setValidator(new QIntValidator(0, 999999, this));
+        field1Edit->setValidator(new QIntValidator(1, 999999, this));  // Durata minima 1 minuto
         field2Edit->setValidator(new QDoubleValidator(0, 999999999.99, 2, this));
-        field2Edit->setValidator(new QDoubleValidator(0, 999999999.99, 2, this));
-        field4Edit->setValidator(new QDoubleValidator(0, 10.0, 1, this));
     }
 
     void ModifyMediaDialogueWindow::setupCoverImageSection() {

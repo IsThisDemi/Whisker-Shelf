@@ -204,6 +204,11 @@ namespace View
         // Set main layout as window layout
         setLayout(mainLayout);
 
+        // Set up validators for numeric fields
+        pagesLineEdit->setValidator(new QIntValidator(1, 999999, this));  // Minimo 1 pagina
+        durationLineEdit->setValidator(new QIntValidator(1, 999999, this));  // Minimo 1 secondo
+        budgetLineEdit->setValidator(new QDoubleValidator(0, 999999999.99, 2, this));  // Budget può essere 0
+
         // Initially hide all specific fields
         onTypeChanged(0);
 
