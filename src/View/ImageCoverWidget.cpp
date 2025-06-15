@@ -54,22 +54,30 @@ namespace View
                 binDir.cdUp();
             #endif
 
-            // Extract just the filename from the path
-            QString filename = QFileInfo(imagePath).fileName();
+            // Handle the image path
+            QString adjustedPath = imagePath;
+            
+            // Rimuovi i prefissi relativi
+            if (adjustedPath.startsWith("../../../src/")) {
+                adjustedPath = adjustedPath.mid(13); // rimuovi "../../../src/"
+            } else if (adjustedPath.startsWith("../src/")) {
+                adjustedPath = adjustedPath.mid(7); // rimuovi "../src/"
+            }
+            
+            QString filename = QFileInfo(adjustedPath).fileName();
             
             #ifdef Q_OS_MAC
-                // On macOS, we need to go up three levels and look in images/
-                if (binDir.absolutePath().contains("WhiskerShelf.app")) {
-                    binDir.cdUp(); // up from MacOS
-                    binDir.cdUp(); // up from Contents
-                    binDir.cdUp(); // up from .app
-                }
                 absolutePath = binDir.absoluteFilePath("images/" + filename);
             #else
-                // On Linux, go up from build dir and look in src/images/
-                binDir.cdUp();
-                QString imagePath = "src/images/" + filename;
-                absolutePath = binDir.absoluteFilePath(imagePath);
+                if (adjustedPath.startsWith("images/")) {
+                    // Se il percorso è già images/nome.png
+                    binDir.cd("src");
+                    absolutePath = binDir.absoluteFilePath(adjustedPath);
+                } else {
+                    // Se il percorso è solo il nome del file
+                    binDir.cd("src");
+                    absolutePath = binDir.absoluteFilePath("images/" + filename);
+                }
             #endif
             
             // Verifica se il file esiste
