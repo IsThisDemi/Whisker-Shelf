@@ -231,7 +231,22 @@ namespace View
         coverImagePreview = new QLabel(this);
         
         if (!originalCoverImage.empty()) {
-            QImage image(QString::fromStdString(originalCoverImage));
+            QString appPath = QCoreApplication::applicationDirPath();
+            QDir binDir(appPath);
+            
+            #ifdef Q_OS_MAC
+                if (binDir.absolutePath().contains("WhiskerShelf.app")) {
+                    binDir.cdUp();
+                    binDir.cdUp();
+                    binDir.cdUp();
+                }
+            #else
+                binDir.cdUp();
+                binDir.cd("src");
+            #endif
+            
+            QString imgPath = binDir.absoluteFilePath("images/" + QString::fromStdString(originalCoverImage).split("/").last());
+            QImage image(imgPath);
             if (!image.isNull()) {
                 coverImagePreview->setPixmap(QPixmap::fromImage(image).scaled(100, 100, Qt::KeepAspectRatio));
             }
@@ -426,8 +441,14 @@ namespace View
         std::string name = nameLineEdit->text().toStdString();
         std::string description = descriptionLineEdit->text().toStdString();
         std::string author = authorLineEdit->text().toStdString();
-        std::string coverImage = selectedCoverPath.toStdString();
-        if (coverImage.empty()) {
+        std::string coverImage;
+        if (!selectedCoverPath.isEmpty()) {
+            #ifdef Q_OS_MAC
+                coverImage = "../../../src/images/" + selectedCoverPath.split("/").last().toStdString();
+            #else
+                coverImage = "../src/images/" + selectedCoverPath.split("/").last().toStdString();
+            #endif
+        } else {
             coverImage = originalCoverImage;
         }
 
