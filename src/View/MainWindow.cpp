@@ -423,31 +423,42 @@ namespace View
     // Update the cover image after media modification
     void MainWindow::mediaModifiedHandler(unsigned int id) 
     {
-        for (Media::AbstractMedia *media : medias)
-        {
-            if (media->getId() == id)
-            {
-                // Try to use the media's cover image first
-                QString coverImage = QString::fromStdString(media->getCoverImage());
-                qDebug() << "\nMainWindow::mediaModifiedHandler - Got cover image path:" << coverImage;
-                if (!coverImage.isEmpty()) {
-                    imageCoverWidget->setImage(coverImage);
-                } else {
-                    qDebug() << "MainWindow::mediaModifiedHandler - No cover image, using default icon";
-                    // If no cover image, use the default icon
-                    QString imagePath;
-                    if (dynamic_cast<Media::Article *>(media))
-                        imagePath = ":/Assets/Icons/Medias/article.png";
-                    else if (dynamic_cast<Media::Audio *>(media))
-                        imagePath = ":/Assets/Icons/Medias/audio.png";
-                    else if (dynamic_cast<Media::Book *>(media))
-                        imagePath = ":/Assets/Icons/Medias/book.png";
-                    else if (dynamic_cast<Media::Film *>(media))
-                        imagePath = ":/Assets/Icons/Medias/movie.png";
-                    imageCoverWidget->setImage(imagePath);
-                }
+        // Safety check for widget
+        if (!imageCoverWidget) return;
+
+        // Find the media safely
+        Media::AbstractMedia* targetMedia = nullptr;
+        for (Media::AbstractMedia *media : medias) {
+            if (media && media->getId() == id) {
+                targetMedia = media;
                 break;
             }
+        }
+
+        if (!targetMedia) return;
+
+        QString coverImage;
+        try {
+            coverImage = QString::fromStdString(targetMedia->getCoverImage());
+        } catch (...) {
+            coverImage = "";
+        }
+        qDebug() << "[mediaModifiedHandler] coverImage path =" << coverImage;
+
+        if (!coverImage.isEmpty()) {
+            imageCoverWidget->setImage(coverImage);
+        } else {
+            // Use default icon based on media type
+            QString imagePath = ":/Assets/Icons/media.png";
+            if (dynamic_cast<Media::Article *>(targetMedia))
+                imagePath = ":/Assets/Icons/Medias/article.png";
+            else if (dynamic_cast<Media::Audio *>(targetMedia))
+                imagePath = ":/Assets/Icons/Medias/audio.png";
+            else if (dynamic_cast<Media::Book *>(targetMedia))
+                imagePath = ":/Assets/Icons/Medias/book.png";
+            else if (dynamic_cast<Media::Film *>(targetMedia))
+                imagePath = ":/Assets/Icons/Medias/movie.png";
+            imageCoverWidget->setImage(imagePath);
         }
     }
 
