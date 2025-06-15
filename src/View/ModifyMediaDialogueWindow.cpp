@@ -360,12 +360,12 @@ namespace View
         // Get the project src directory by going up from the executable location
         QDir projectDir(QCoreApplication::applicationDirPath());
         
-        // Navigate to the src directory
+        // Navigate to the correct directory
         #ifdef Q_OS_MAC
             projectDir.cdUp(); // up from MacOS
             projectDir.cdUp(); // up from Contents
             projectDir.cdUp(); // up from .app
-            projectDir.cd("src"); // enter src directory
+            // Non entriamo in src su Mac, le immagini vanno in images/
         #else
             projectDir.cdUp(); // up from build directory
             projectDir.cd("src"); // enter src directory
