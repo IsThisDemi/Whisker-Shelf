@@ -36,40 +36,23 @@ namespace View
         if (imagePath.startsWith(":/")) {
             absolutePath = imagePath;
         } else {
-            // Get the application directory path and create base directory
+            QString filename = QFileInfo(imagePath).fileName();
+#ifdef Q_OS_MAC
             QString appPath = QCoreApplication::applicationDirPath();
             QDir binDir(appPath);
-            
-            #ifdef Q_OS_MAC
-                if (binDir.absolutePath().contains("WhiskerShelf.app")) {
-                    binDir.cdUp(); // up from MacOS
-                    binDir.cdUp(); // up from Contents
-                    binDir.cdUp(); // up from .app
-                }
-            #else
-                binDir.cdUp(); // just up from build directory
-            #endif
-
-            // Try to load the image using the exact path provided
-            if (!imagePath.isEmpty()) {
-                QString directPath = binDir.absoluteFilePath(imagePath);
-                if (QFile::exists(directPath)) {
-                    absolutePath = directPath;
-                }
+            if (binDir.absolutePath().contains("WhiskerShelf.app")) {
+                binDir.cdUp();
+                binDir.cdUp();
+                binDir.cdUp();
             }
-            
-            // If direct path failed, try the default location
-            if (absolutePath.isEmpty() || !QFile::exists(absolutePath)) {
-                QString filename = QFileInfo(imagePath).fileName();
-                #ifdef Q_OS_MAC
-                    absolutePath = binDir.absoluteFilePath("images/" + filename);
-                #else
-                    absolutePath = binDir.absoluteFilePath("src/images/" + filename);
-                #endif
-            }
+            absolutePath = binDir.absoluteFilePath("images/" + filename);
+#else
+            // Su Linux, se esegui da src, cerca direttamente in images/
+            QDir currentDir(QDir::currentPath());
+            absolutePath = currentDir.absoluteFilePath("images/" + filename);
+#endif
         }
 
-        // Try to load the image
         QPixmap pixmap;
         if (!absolutePath.isEmpty() && QFile::exists(absolutePath)) {
             pixmap.load(absolutePath);
