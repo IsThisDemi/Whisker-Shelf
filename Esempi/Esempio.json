@@ -1,0 +1,49 @@
+[
+    {
+        "author": "Mark Brown",
+        "coverImage": "../../../images/20250615_170205_hyenas.jpg",
+        "description": "Studio comparativo sul comportamento sociale delle iene maculate in Kenya: analisi delle gerarchie matriarcali e delle strategie di caccia cooperativa.",
+        "doi": "123ABC",
+        "id": 1,
+        "journalName": "Animal Facts",
+        "pageCount": 2,
+        "title": "Le iene esistono?",
+        "type": "Article",
+        "volumeNumber": "22A"
+    },
+    {
+        "album": "Life",
+        "author": "Yeat",
+        "coverImage": "../../../images/20250615_173429_Lyfë.jpeg",
+        "description": "Uno dei brani più iconici del rapper americano Yeat.",
+        "duration": 166,
+        "format": "mp3",
+        "id": 2,
+        "title": "System",
+        "type": "Audio"
+    },
+    {
+        "author": "L. Frank Baum",
+        "coverImage": "../../../images/20250615_173726_mago_oz.png",
+        "description": "Dorothy e il suo cane Toto vengono trasportati da un tornado nel magico mondo di Oz.",
+        "genre": "Fantasy",
+        "id": 3,
+        "isbn": "ABC123",
+        "pageCount": 450,
+        "publisher": "Penguins",
+        "title": "Il meraviglioso mago di Oz",
+        "type": "Book"
+    },
+    {
+        "author": "John Lasseter",
+        "budget": 40000000,
+        "coverImage": "../../../images/20250615_173859_Cars_Logo_Black.svg.png",
+        "description": "Film animato di autovetture",
+        "duration": 125,
+        "genre": "Family",
+        "id": 4,
+        "productionCompany": "Disney",
+        "title": "Cars",
+        "type": "Film"
+    }
+]
