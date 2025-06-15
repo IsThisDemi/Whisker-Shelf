@@ -314,7 +314,7 @@ namespace View
                 
                 // Aggiorna ImageCoverWidget
                 QString coverImage = QString::fromStdString(media->getCoverImage());
-                if (!coverImage.isEmpty() && QFile::exists(coverImage)) {
+                if (!coverImage.isEmpty()) {
                     imageCoverWidget->setImage(coverImage);
                 } else {
                     // Se non c'è un'immagine di copertina, usa l'icona predefinita

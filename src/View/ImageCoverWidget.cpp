@@ -1,8 +1,8 @@
 #include "ImageCoverWidget.h"
 #include <QDir>
 #include <QCoreApplication>
-#include <QDebug>
 #include <QFileInfo>
+#include <QStandardPaths>
 
 namespace View
 {
@@ -36,20 +36,37 @@ namespace View
         if (imagePath.startsWith(":/")) {
             absolutePath = imagePath;
         } else {
-            // Get the directory of the running binary
-            QDir binDir(QCoreApplication::applicationDirPath());
-            binDir.cdUp(); // MacOS
-            binDir.cdUp(); // Contents
-            binDir.cdUp(); // WhiskerShelf.app
+            // Get the application directory path
+            QString appPath = QCoreApplication::applicationDirPath();
+            
+            // Create a QDir object for the current binary location
+            QDir binDir(appPath);
 
-            // Se il percorso inizia con "../../../src/", rimuovi il prefisso
+            #ifdef Q_OS_MAC
+                // On macOS, we need to go up three levels from the .app bundle
+                if (binDir.absolutePath().contains("WhiskerShelf.app")) {
+                    binDir.cdUp(); // up from MacOS
+                    binDir.cdUp(); // up from Contents
+                    binDir.cdUp(); // up from .app
+                }
+            #else
+                // On Linux, just go up one level from the build directory
+                binDir.cdUp();
+            #endif
+
+            // Handle the image path
             QString adjustedPath = imagePath;
+            
+            // Rimuovi il prefisso relativo "../../../src/" se presente
             if (adjustedPath.startsWith("../../../src/")) {
-                adjustedPath.remove(0, 13); // rimuovi "../../../src/"
+                adjustedPath = adjustedPath.mid(13); // rimuovi "../../../src/"
             }
             
             // Costruisci il percorso assoluto
-            absolutePath = binDir.absoluteFilePath(adjustedPath);
+            absolutePath = binDir.absoluteFilePath("images/" + QFileInfo(adjustedPath).fileName());
+            
+            // Verifica se il file esiste
+            QFileInfo check_file(absolutePath);
         }
 
         QPixmap pixmap(absolutePath);

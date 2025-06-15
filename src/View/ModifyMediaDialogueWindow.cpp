@@ -357,17 +357,25 @@ namespace View
         QString newFileName = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss_") + 
                             originalFile.fileName();
         
-        // Get the project root directory (where src folder is)
+        // Get the project src directory by going up from the executable location
         QDir projectDir(QCoreApplication::applicationDirPath());
-        projectDir.cdUp(); // up from MacOS
-        projectDir.cdUp(); // up from Contents
-        projectDir.cdUp(); // up from WhiskerShelf.app
+        
+        // Navigate to the src directory
+        #ifdef Q_OS_MAC
+            projectDir.cdUp(); // up from MacOS
+            projectDir.cdUp(); // up from Contents
+            projectDir.cdUp(); // up from .app
+            projectDir.cd("src"); // enter src directory
+        #else
+            projectDir.cdUp(); // up from build directory
+            projectDir.cd("src"); // enter src directory
+        #endif
         
         // Create images directory if it doesn't exist
-        QString imagesDir = projectDir.absolutePath() + "/src/images";
-        QDir().mkpath(imagesDir);
+        QDir imagesDir(projectDir.absoluteFilePath("images"));
+        imagesDir.mkpath(".");
         
-        QString destinationPath = imagesDir + "/" + newFileName;
+        QString destinationPath = imagesDir.absoluteFilePath(newFileName);
         
         // If the destination file already exists, remove it
         if (QFile::exists(destinationPath)) {
