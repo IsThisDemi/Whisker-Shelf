@@ -377,16 +377,19 @@ namespace View
         
         QString destinationPath = imagesDir.absoluteFilePath(newFileName);
         
-        // If the destination file already exists, remove it
+        // If the destination file exists, remove it and copy the new one
         if (QFile::exists(destinationPath)) {
             QFile::remove(destinationPath);
         }
-        
-        // Copy the file
-        if (!QFile::copy(originalImagePath, destinationPath))
+        if (!QFile::copy(originalImagePath, destinationPath)) {
             return QString();
-            
-        return "../../../src/images/" + newFileName;
+        }
+        
+        #ifdef Q_OS_MAC
+            return "../../../src/images/" + newFileName;
+        #else
+            return "../src/images/" + newFileName;
+        #endif
     }
 
     // Enables the apply button if there are any changes to apply.
