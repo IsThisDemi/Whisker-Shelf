@@ -364,7 +364,7 @@ namespace View
         projectDir.cdUp(); // up from WhiskerShelf.app
         
         // Create images directory if it doesn't exist
-        QString imagesDir = projectDir.absolutePath() + "/images";
+        QString imagesDir = projectDir.absolutePath() + "/src/images";
         QDir().mkpath(imagesDir);
         
         QString destinationPath = imagesDir + "/" + newFileName;
@@ -378,7 +378,7 @@ namespace View
         if (!QFile::copy(originalImagePath, destinationPath))
             return QString();
             
-        return "../../../images/" + newFileName;
+        return "../../../src/images/" + newFileName;
     }
 
     // Enables the apply button if there are any changes to apply.

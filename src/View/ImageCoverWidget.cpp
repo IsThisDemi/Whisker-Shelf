@@ -42,10 +42,10 @@ namespace View
             binDir.cdUp(); // Contents
             binDir.cdUp(); // WhiskerShelf.app
 
-            // Se il percorso inizia con "../../../", rimuovi il prefisso
+            // Se il percorso inizia con "../../../src/", rimuovi il prefisso
             QString adjustedPath = imagePath;
-            if (adjustedPath.startsWith("../../../")) {
-                adjustedPath.remove(0, 9); // rimuovi "../../../"
+            if (adjustedPath.startsWith("../../../src/")) {
+                adjustedPath.remove(0, 13); // rimuovi "../../../src/"
             }
             
             // Costruisci il percorso assoluto
