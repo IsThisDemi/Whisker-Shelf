@@ -30,6 +30,8 @@ namespace View
 
     void ImageCoverWidget::setImage(const QString &imagePath)
     {
+        if (!imageLabel)
+            return;
         currentImagePath = imagePath;
 
         QString absolutePath;
@@ -47,7 +49,6 @@ namespace View
             }
             absolutePath = binDir.absoluteFilePath("images/" + filename);
 #else
-            // Su Linux, se esegui da src, cerca direttamente in images/
             QDir currentDir(QDir::currentPath());
             absolutePath = currentDir.absoluteFilePath("images/" + filename);
 #endif
@@ -72,7 +73,13 @@ namespace View
 
     ImageCoverWidget::~ImageCoverWidget()
     {
-        delete imageLabel;
-        delete layout;
+        if (imageLabel) {
+            delete imageLabel;
+            imageLabel = nullptr;
+        }
+        if (layout) {
+            delete layout;
+            layout = nullptr;
+        }
     }
 }
