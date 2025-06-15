@@ -443,10 +443,11 @@ namespace View
         std::string author = authorLineEdit->text().toStdString();
         std::string coverImage;
         if (!selectedCoverPath.isEmpty()) {
+            QString filename = QFileInfo(selectedCoverPath).fileName();
             #ifdef Q_OS_MAC
-                coverImage = "../../../src/images/" + selectedCoverPath.split("/").last().toStdString();
+                coverImage = "images/" + filename.toStdString();
             #else
-                coverImage = "../src/images/" + selectedCoverPath.split("/").last().toStdString();
+                coverImage = "src/images/" + filename.toStdString();
             #endif
         } else {
             coverImage = originalCoverImage;

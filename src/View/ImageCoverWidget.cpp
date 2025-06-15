@@ -30,66 +30,55 @@ namespace View
 
     void ImageCoverWidget::setImage(const QString &imagePath)
     {
-        qDebug() << "ImageCoverWidget::setImage - Received path:" << imagePath;
         currentImagePath = imagePath;
 
         QString absolutePath;
         if (imagePath.startsWith(":/")) {
             absolutePath = imagePath;
-            qDebug() << "Resource path detected:" << absolutePath;
         } else {
-            qDebug() << "\nImageCoverWidget::setImage - Processing path:" << imagePath;
-            // Get the application directory path
+            // Get the application directory path and create base directory
             QString appPath = QCoreApplication::applicationDirPath();
-            
-            // Create a QDir object for the current binary location
             QDir binDir(appPath);
-
+            
             #ifdef Q_OS_MAC
-                // On macOS, we need to go up three levels from the .app bundle
                 if (binDir.absolutePath().contains("WhiskerShelf.app")) {
                     binDir.cdUp(); // up from MacOS
                     binDir.cdUp(); // up from Contents
                     binDir.cdUp(); // up from .app
                 }
             #else
-                // On Linux, just go up one level from the build directory
-                binDir.cdUp();
+                binDir.cdUp(); // just up from build directory
             #endif
 
-            // Get just the filename, stripping any path
-            QString filename = QFileInfo(imagePath).fileName();
-            
-            #ifdef Q_OS_MAC
-                absolutePath = binDir.absoluteFilePath("images/" + filename);
-                qDebug() << "Mac path:" << absolutePath;
-            #else
-                // Su Linux, prima controlliamo se il file esiste in src/images
-                QString srcPath = binDir.absoluteFilePath("src/images/" + filename);
-                qDebug() << "Checking Linux path:" << srcPath << "exists:" << QFile::exists(srcPath);
-                absolutePath = srcPath;
-            #endif
-
-            // Verifica se il file esiste prima di usarlo
-            if (!QFile::exists(absolutePath)) {
-                qDebug() << "WARNING: File not found at:" << absolutePath;
+            // Try to load the image using the exact path provided
+            if (!imagePath.isEmpty()) {
+                QString directPath = binDir.absoluteFilePath(imagePath);
+                if (QFile::exists(directPath)) {
+                    absolutePath = directPath;
+                }
             }
             
-            // Verifica se il file esiste
-            QFileInfo check_file(absolutePath);
+            // If direct path failed, try the default location
+            if (absolutePath.isEmpty() || !QFile::exists(absolutePath)) {
+                QString filename = QFileInfo(imagePath).fileName();
+                #ifdef Q_OS_MAC
+                    absolutePath = binDir.absoluteFilePath("images/" + filename);
+                #else
+                    absolutePath = binDir.absoluteFilePath("src/images/" + filename);
+                #endif
+            }
         }
 
-        qDebug() << "Final absolute path:" << absolutePath;
-        qDebug() << "File exists:" << QFile::exists(absolutePath);
-        
-        QPixmap pixmap(absolutePath);
-        qDebug() << "Pixmap is null:" << pixmap.isNull();
+        // Try to load the image
+        QPixmap pixmap;
+        if (!absolutePath.isEmpty() && QFile::exists(absolutePath)) {
+            pixmap.load(absolutePath);
+        }
 
         if (!pixmap.isNull()) {
             QSize widgetSize = size();
             QPixmap scaledPixmap = pixmap.scaled(widgetSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             imageLabel->setPixmap(scaledPixmap);
-            qDebug() << "Successfully set pixmap";
         } else {
             QPixmap defaultPixmap(":/Assets/Icons/media.png");
             QSize widgetSize = size();
